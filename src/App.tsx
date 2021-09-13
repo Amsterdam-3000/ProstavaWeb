@@ -18,7 +18,7 @@ function App() {
             console.log('Hello, user!', user);
           }}
           requestAccess={'write'}
-      />
+        />
       </header>
     </div>
   );
