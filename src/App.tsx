@@ -1,14 +1,24 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import TelegramLoginButton from 'react-telegram-login';
+import { TLoginButton, TLoginButtonSize } from 'react-telegram-auth';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <TelegramLoginButton dataOnauth={(response: any)=>console.log(response)} botName="ProstavaBot" />
+        <TLoginButton
+          botName="ProstavaBot"
+          buttonSize={TLoginButtonSize.Large}
+          lang="en"
+          usePic={true}
+          cornerRadius={20}
+          onAuthCallback={(user) => {
+            console.log('Hello, user!', user);
+          }}
+          requestAccess={'write'}
+      />
       </header>
     </div>
   );
