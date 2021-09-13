@@ -1,5 +1,8 @@
 {
-    "root": "public_html/",
+    "root": "build/",
+    "routes": {
+        "/**": "index.html"
+    },
     "headers": {
         "/**": {
             "X-Frame-Options": "SAMEORIGIN"
