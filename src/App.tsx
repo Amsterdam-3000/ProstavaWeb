@@ -6,7 +6,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src="https://github.com/usebooz/ProstavaBot/blob/main/public/ProstavaBot.png" className="App-logo" alt="logo" />
         <TLoginButton
           botName="ProstavaBot"
           buttonSize={TLoginButtonSize.Large}
