@@ -19,7 +19,7 @@ function App() {
         >
           Learn React
         </a>
-        <TelegramLoginButton dataOnauth={(response: any)=>console.log(response)} botName="ZternyaevBot" />
+        <TelegramLoginButton dataOnauth={(response: any)=>console.log(response)} botName="ProstavaBot" />
       </header>
     </div>
   );
