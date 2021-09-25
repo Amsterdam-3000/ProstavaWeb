@@ -3,17 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@reduxjs/toolkit": "^1.6.1",
+    "@testing-library/dom": "^8.5.0",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^12.20.24",
-    "@types/react": "^16.14.15",
-    "@types/react-dom": "^16.9.14",
+    "connected-react-router": "^6.9.1",
+    "history": "^4.10.1",
+    "node-sass": "^6.0.1",
+    "primeflex": "^3.0.1",
+    "primeicons": "^4.1.0",
+    "primereact": "^6.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
+    "react-redux": "^7.2.5",
+    "react-router": "^5.2.1",
     "react-scripts": "4.0.3",
     "react-telegram-auth": "^1.0.3",
+    "react-transition-group": "^4.4.2",
     "typescript": "^4.4.3",
     "web-vitals": "^0.2.4",
     "workbox-background-sync": "^5.1.4",
@@ -29,17 +36,50 @@
     "workbox-strategies": "^5.1.4",
     "workbox-streams": "^5.1.4"
   },
+  "devDependencies": {
+    "@types/history": "^4.7.9",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.9.2",
+    "@types/react": "^17.0.21",
+    "@types/react-dom": "^17.0.9",
+    "@types/react-router": "^5.1.16",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.4.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "eslint": "node_modules/.bin/eslint src/"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "prettier"
+    ],
+    "rules": {
+      "semi": [
+        "error",
+        "always"
+      ],
+      "quotes": [
+        "error",
+        "double"
+      ]
+    },
+    "plugins": [
+      "prettier"
     ]
+  },
+  "prettier": {
+    "semi": true,
+    "printWidth": 120,
+    "tabWidth": 4,
+    "singleQuote": false,
+    "trailingComma": "none"
   },
   "browserslist": {
     "production": [
