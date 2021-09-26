@@ -1,7 +1,13 @@
 import React from "react";
 import { TLoginButton, TLoginButtonSize } from "react-telegram-auth";
+import { useHistory } from "react-router";
+
+import { useLoginMutation } from "../../app/services/prostava";
 
 export function Login() {
+    const [login] = useLoginMutation();
+    const history = useHistory();
+
     return (
         <div className="login-body">
             <div className="login-wrapper">
@@ -18,8 +24,16 @@ export function Login() {
                             lang="en"
                             usePic={true}
                             cornerRadius={20}
-                            onAuthCallback={(user) => {
-                                console.log("Hello, user!", user);
+                            onAuthCallback={async (authUser) => {
+                                try {
+                                    await login(authUser);
+                                    // Being that the result is handled in extraReducers in authSlice,
+                                    // we know that we're authenticated after this, so the user
+                                    // and token will be present in the store
+                                    history.push("/");
+                                } catch (error) {
+                                    console.log(error);
+                                }
                             }}
                             requestAccess={"write"}
                         />

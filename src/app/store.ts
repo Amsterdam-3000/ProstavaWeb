@@ -4,7 +4,7 @@ import { LocationState } from "history";
 
 import { history } from "./history";
 import { api } from "./services/prostava";
-import authReducer from "../features/login/authSlice";
+import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
     reducer: {
@@ -12,7 +12,7 @@ export const store = configureStore({
         auth: authReducer,
         router: connectRouter(history) as any as Reducer<RouterState<LocationState>>
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(routerMiddleware(history))
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(routerMiddleware(history), api.middleware)
 });
 
 export type AppDispatch = typeof store.dispatch;

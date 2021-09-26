@@ -1,24 +1,24 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { TUser } from "react-telegram-auth";
+
 import { RootState } from "../store";
 
 export interface User {
     first_name: string;
-    last_name: string;
+    last_name?: string | undefined;
+    id: number;
+    photo_url?: string | undefined;
+    username?: string | undefined;
 }
 
-export interface UserResponse {
+export interface Auth {
     user: User;
     token: string;
 }
 
-export interface LoginRequest {
-    username: string;
-    password: string;
-}
-
 export const api = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: "/",
+        baseUrl: `${process.env.REACT_APP_BOT_API_URL}/api`,
         prepareHeaders: (headers, { getState }) => {
             // By default, if we have a token in the store, let's use that for authenticated requests
             const token = (getState() as RootState).auth.token;
@@ -29,11 +29,11 @@ export const api = createApi({
         }
     }),
     endpoints: (builder) => ({
-        login: builder.mutation<UserResponse, LoginRequest>({
-            query: (credentials) => ({
+        login: builder.mutation<Auth, TUser>({
+            query: (authUser) => ({
                 url: "login",
                 method: "POST",
-                body: credentials
+                body: authUser
             })
         }),
         protected: builder.mutation<{ message: string }, void>({
