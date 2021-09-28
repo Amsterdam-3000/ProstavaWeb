@@ -10,7 +10,7 @@ import { PrivateRoute } from "./utils/PrivateRoute";
 function App() {
     return (
         <Switch>
-            <PrivateRoute exact path="/" component={EmptyPage}/>
+            <PrivateRoute exact path="/" component={EmptyPage} />
             <Route path="/login" component={Login} />
             <Route path="*" component={NotFound} />
         </Switch>

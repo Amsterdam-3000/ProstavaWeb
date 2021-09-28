@@ -1,0 +1,27 @@
+$colors: (
+    "blue": #54b0f3,
+    "green": #29c76f,
+    "yellow": #f3d054,
+    "cyan": #3ec9d6,
+    "pink": #ea5455,
+    "indigo": #5464f3,
+    "teal": #0dc381,
+    "orange": #ff9f42,
+    "bluegray": #6878a0,
+    "purple": #7254f3,
+);
+
+$primaryColor: #7986cb;
+$primaryLightColor: scale-color($primaryColor, $lightness: 30%) !default;
+$primaryDarkColor: scale-color($primaryColor, $lightness: -10%) !default;
+$primaryDarkerColor: scale-color($primaryColor, $lightness: -20%) !default;
+$primaryTextColor: #ffffff;
+
+$highlightBg: rgba(121, 134, 203, 0.16);
+$highlightTextColor: rgba(255, 255, 255, 0.87);
+
+@import "./_variables_dark";
+@import "./_overrides_variables";
+@import "./designer/_components";
+@import "./_extensions";
+@import "./_overrides_styles";
