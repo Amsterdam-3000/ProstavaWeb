@@ -1,18 +1,26 @@
 import React from "react";
-import { Route, Switch } from "react-router";
+import PrimeReact from "primereact/api";
 
-import "./App.scss";
-import { Login } from "./features/auth/Login";
-import { NotFound } from "./features/others/NotFound";
-import { EmptyPage } from "./features/others/EmptyPage";
+import { Route, Switch } from "react-router";
 import { PrivateRoute } from "./utils/PrivateRoute";
 
+import { Login } from "./features/auth/Login";
+import { Exception } from "./features/exception/Exception";
+import { EmptyPage } from "./features/EmptyPage";
+
+import "./App.scss";
+
 function App() {
+    PrimeReact.ripple = true;
+
     return (
         <Switch>
             <PrivateRoute exact path="/" component={EmptyPage} />
             <Route path="/login" component={Login} />
-            <Route path="*" component={NotFound} />
+            <Route
+                path="*"
+                render={() => <Exception title="NOT FOUND" detail="Requested resource is not available" />}
+            />
         </Switch>
     );
 }

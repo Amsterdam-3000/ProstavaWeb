@@ -1,49 +1,61 @@
 import React from "react";
-import { useHistory } from "react-router";
-import { TLoginButton, TLoginButtonSize } from "react-telegram-auth";
 
+import { useHistory } from "react-router";
 import { useLoginMutation } from "../../app/services/prostava";
+
+import { TLoginButton, TLoginButtonSize } from "react-telegram-auth";
 
 export function Login() {
     const [login] = useLoginMutation();
     const history = useHistory();
 
     return (
-        <div className="login-wrapper grid grid-nogutter h-screen">
-            <div className="login-panel col md:col-4 h-full py-6 px-4 text-center flex align-items-center justify-content-between flex-column">
-                <img src="assets/icons/apple-touch-icon.png" className="logo h-4rem border-round" alt="prostava-logo" />
-                <div className="login-form flex align-items-center flex-column">
-                    <h2>Login</h2>
-                    <p className="text-secondary mb-5 font-medium">
-                        Don't have a Telegram account?{" "}
-                        <a href="https://telegram.org/apps" target="_blank" rel="noreferrer">
-                            Create
-                        </a>
-                    </p>
-                    <TLoginButton
-                        botName={process.env.REACT_APP_BOT_NAME!}
-                        buttonSize={TLoginButtonSize.Large}
-                        lang="en"
-                        usePic={true}
-                        cornerRadius={20}
-                        onAuthCallback={async (authUser) => {
-                            try {
-                                await login(authUser);
-                                history.push("/");
-                            } catch (error) {
-                                console.log(error);
-                            }
-                        }}
-                        requestAccess={"write"}
+        <div className="login-body grid grid-nogutter h-screen">
+            <div className="login-panel col md:col-4 h-full overflow-hidden relative">
+                <img
+                    src="assets/images/ProstavaBot2.png"
+                    alt="prostava-back"
+                    className="absolute h-full top-0 left-0 opacity-10 md:hidden"
+                />
+                <div className="login-panel-wrapper relative h-full text-center py-6 px-4 flex align-items-center flex-column">
+                    <img
+                        src="assets/icons/apple-touch-icon.png"
+                        alt="prostava-logo"
+                        className="h-3rem border-round top-0 left-50 ml-4 hidden md:block"
                     />
+                    <div className="login-form flex flex-column flex-grow-1 justify-content-center">
+                        <h2>Login</h2>
+                        <p className="text-secondary mb-5 font-medium">
+                            Don't have a Telegram account?{" "}
+                            <a href="https://telegram.org/apps" target="_blank" rel="noreferrer">
+                                Create
+                            </a>
+                        </p>
+                        <TLoginButton
+                            botName={process.env.REACT_APP_BOT_NAME!}
+                            buttonSize={TLoginButtonSize.Large}
+                            lang="en"
+                            usePic={true}
+                            cornerRadius={20}
+                            onAuthCallback={async (authUser) => {
+                                try {
+                                    await login(authUser);
+                                    history.push("/");
+                                } catch (error) {
+                                    console.log(error);
+                                }
+                            }}
+                            requestAccess={"write"}
+                        />
+                    </div>
+                    <p className="text-secondary font-medium">
+                        Add{" "}
+                        <a href={`https://t.me/${process.env.REACT_APP_BOT_NAME}`} target="_blank" rel="noreferrer">
+                            {process.env.REACT_APP_BOT_NAME}
+                        </a>{" "}
+                        to your groups
+                    </p>
                 </div>
-                <p className="text-secondary font-medium">
-                    Add{" "}
-                    <a href={`https://t.me/${process.env.REACT_APP_BOT_NAME}`} target="_blank" rel="noreferrer">
-                        {process.env.REACT_APP_BOT_NAME}
-                    </a>{" "}
-                    to your groups
-                </p>
             </div>
             <div className="login-image md:col-8 h-full hidden md:block overflow-hidden relative">
                 <img
@@ -58,10 +70,10 @@ export function Login() {
                                 Hi! <br />
                                 I’m Prostava
                             </h1>
-                            <h3>
+                            <h5>
                                 I can help you control prostavas
                                 <br />
-                            </h3>
+                            </h5>
                         </div>
                     </div>
                     <div className="image-footer flx align-cotent-center">

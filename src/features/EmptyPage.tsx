@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { useProtectedMutation } from "../../app/services/prostava";
+import { useProtectedMutation } from "../app/services/prostava";
 
 export const EmptyPage = () => {
     const [test, { data, error }] = useProtectedMutation();
