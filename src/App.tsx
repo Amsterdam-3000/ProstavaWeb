@@ -1,21 +1,22 @@
 import React from "react";
 import PrimeReact from "primereact/api";
 
+import "./App.scss";
+
 import { Route, Switch } from "react-router";
 import { PrivateRoute } from "./utils/PrivateRoute";
 
 import { Login } from "./features/auth/Login";
 import { Exception } from "./features/exception/Exception";
-import { EmptyPage } from "./features/EmptyPage";
-
-import "./App.scss";
+import { Router } from "./features/Router";
 
 function App() {
     PrimeReact.ripple = true;
 
     return (
         <Switch>
-            <PrivateRoute exact path="/" component={EmptyPage} />
+            <PrivateRoute exact path="/" component={Router} />
+            {/* <PrivateRoute path="/qwerty" component={Router} /> */}
             <Route path="/login" component={Login} />
             <Route
                 path="*"

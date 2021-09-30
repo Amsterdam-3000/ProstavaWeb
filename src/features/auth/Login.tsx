@@ -1,13 +1,25 @@
 import React from "react";
 
 import { useHistory } from "react-router";
+import { useSelector } from "react-redux";
 import { useLoginMutation } from "../../app/services/prostava";
+import { selectLocation } from "../../app/history";
 
-import { TLoginButton, TLoginButtonSize } from "react-telegram-auth";
+import { TLoginButton, TLoginButtonSize, TUser } from "react-telegram-auth";
 
 export function Login() {
-    const [login] = useLoginMutation();
     const history = useHistory();
+    const location = useSelector(selectLocation);
+    const [login] = useLoginMutation();
+
+    async function authHandler(authUser: TUser) {
+        try {
+            await login(authUser);
+            history.push(location.state ? location.state.from.pathname : "/");
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="login-body grid grid-nogutter h-screen">
@@ -37,14 +49,7 @@ export function Login() {
                             lang="en"
                             usePic={true}
                             cornerRadius={20}
-                            onAuthCallback={async (authUser) => {
-                                try {
-                                    await login(authUser);
-                                    history.push("/");
-                                } catch (error) {
-                                    console.log(error);
-                                }
-                            }}
+                            onAuthCallback={authHandler}
                             requestAccess={"write"}
                         />
                     </div>

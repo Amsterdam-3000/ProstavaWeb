@@ -1,10 +1,14 @@
 import { configureStore, ThunkAction, Action, Reducer } from "@reduxjs/toolkit";
 import { connectRouter, routerMiddleware, RouterState } from "connected-react-router";
-import { LocationState } from "history";
+import { Location } from "history";
 
 import { history } from "./history";
 import { api } from "./services/prostava";
 import authReducer from "../features/auth/authSlice";
+
+type LocationState = {
+    from: Location;
+};
 
 export const store = configureStore({
     reducer: {

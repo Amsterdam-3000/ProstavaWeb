@@ -12,6 +12,10 @@ type ExceptionProps = {
 export function Exception(props: ExceptionProps) {
     const history = useHistory();
 
+    function goToDashboard() {
+        history.push("/d");
+    }
+
     return (
         <div className="exception-body relative overflow-hidden h-screen text-center flex align-items-center justify-content-center">
             <img
@@ -23,7 +27,7 @@ export function Exception(props: ExceptionProps) {
             <div className="exception-content relative">
                 <h1 className="exception-title md:text-7xl">{props.title}</h1>
                 <p className="exception-detail text-secondary font-medium">{props.detail}</p>
-                <Button label="Go to Dashboard" icon="pi pi-home" onClick={() => history.push("/")} />
+                <Button label="Go to Dashboard" icon="pi pi-home" onClick={goToDashboard} />
             </div>
         </div>
     );
