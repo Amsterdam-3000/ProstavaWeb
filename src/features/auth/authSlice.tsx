@@ -1,25 +1,31 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { api, User } from "../../app/services/prostava";
+import { api } from "../../app/services/prostava";
 import { RootState } from "../../app/store";
 
 type AuthState = {
-    user: User | null;
     token: string | null;
 };
 
 const slice = createSlice({
     name: "auth",
-    initialState: { user: null, token: null } as AuthState,
+    initialState: { token: null } as AuthState,
     reducers: {},
     extraReducers: (builder) => {
         builder.addMatcher(api.endpoints.login.matchFulfilled, (state, { payload }) => {
-            state.token = payload.token;
-            state.user = payload.user;
+            state.token = payload;
         });
     }
+    // extraReducers: (builder) => {
+    //     builder.addCase(PURGE, (state) => {
+    //         customEntityAdapter.removeAll(state);
+    //     });
+    // }
 });
 
-export default slice.reducer;
+export default slice;
 
-export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const authName = slice.name;
+export const authReducer = slice.reducer;
+
+export const selectCurrentToken = (state: RootState) => state.auth.token;

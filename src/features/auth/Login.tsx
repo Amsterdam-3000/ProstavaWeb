@@ -1,39 +1,67 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
-import { useLoginMutation } from "../../app/services/prostava";
+import { useAppSelector } from "../../hooks/store";
+import { api } from "../../app/services/prostava";
 import { selectLocation } from "../../app/history";
 
+import logo from "../../assets/images/logo.png";
+import background from "../../assets/images/background.png";
+
 import { TLoginButton, TLoginButtonSize, TUser } from "react-telegram-auth";
+import { Avatar } from "primereact/avatar";
+import { Toast } from "primereact/toast";
 
 export function Login() {
     const history = useHistory();
-    const location = useSelector(selectLocation);
-    const [login] = useLoginMutation();
+    const location = useAppSelector(selectLocation);
+    const [login] = api.useLoginMutation();
+    const toast = useRef<Toast>(null);
+
+    useEffect(() => {
+        if (!toast.current) {
+            return;
+        }
+        if (!location.state?.error) {
+            return;
+        }
+        toast.current.show({
+            severity: "error",
+            summary: location.state.error.name,
+            detail: location.state.error.message,
+            life: 3000,
+            contentClassName: ""
+        });
+    }, [location, toast]);
 
     async function authHandler(authUser: TUser) {
         try {
-            await login(authUser);
-            history.push(location.state ? location.state.from.pathname : "/");
+            await login(authUser).unwrap();
+            history.push(location.state?.from ? location.state.from.pathname : "/");
         } catch (error) {
             console.log(error);
+            if (toast.current) {
+                toast.current.show({
+                    severity: "error",
+                    summary: "ACCESS DENIED",
+                    detail: "You do not have the necessary permissions",
+                    life: 3000,
+                    contentClassName: ""
+                });
+            }
         }
     }
 
     return (
         <div className="login-body grid grid-nogutter h-screen">
             <div className="login-panel col md:col-4 h-full overflow-hidden relative">
-                <img
-                    src="assets/images/ProstavaBot2.png"
-                    alt="prostava-back"
-                    className="absolute h-full top-0 left-0 opacity-10 md:hidden"
-                />
+                <img src={background} alt="background" className="absolute h-full top-0 left-0 opacity-10 md:hidden" />
                 <div className="login-panel-wrapper relative h-full text-center py-6 px-4 flex align-items-center flex-column">
-                    <img
-                        src="assets/icons/apple-touch-icon.png"
-                        alt="prostava-logo"
-                        className="h-3rem border-round top-0 left-50 ml-4 hidden md:block"
+                    <Avatar
+                        image={logo}
+                        imageAlt={process.env.REACT_APP_BOT_NAME!}
+                        className="top-0 left-50 hidden md:block"
+                        size="large"
                     />
                     <div className="login-form flex flex-column flex-grow-1 justify-content-center">
                         <h2>Login</h2>
@@ -48,7 +76,7 @@ export function Login() {
                             buttonSize={TLoginButtonSize.Large}
                             lang="en"
                             usePic={true}
-                            cornerRadius={20}
+                            cornerRadius={4}
                             onAuthCallback={authHandler}
                             requestAccess={"write"}
                         />
@@ -63,11 +91,7 @@ export function Login() {
                 </div>
             </div>
             <div className="login-image md:col-8 h-full hidden md:block overflow-hidden relative">
-                <img
-                    className="absolute w-full top-0 left-0 opacity-30"
-                    src="assets/images/ProstavaBot2.png"
-                    alt="prostava-back"
-                />
+                <img className="absolute w-full top-0 left-0 opacity-30" src={background} alt="background" />
                 <div className="login-image-wrapper py-6 px-4 relative h-full flex align-items-center flex-column">
                     <div className="login-image-content flex-grow-1 flex justify-content-center flex-column">
                         <div className="login-image-text mb-5">
@@ -82,7 +106,7 @@ export function Login() {
                         </div>
                     </div>
                     <div className="image-footer flx align-cotent-center">
-                        <p className="text-secondary font-medium">
+                        <p className="font-medium">
                             {process.env.REACT_APP_BOT_NAME}{" "}
                             <a
                                 href="https://github.com/usebooz/ProstavaBot"
@@ -96,6 +120,7 @@ export function Login() {
                     </div>
                 </div>
             </div>
+            <Toast ref={toast} className="w-11 sm:w-30rem" />
         </div>
     );
 }

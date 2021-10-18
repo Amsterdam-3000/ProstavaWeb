@@ -2,6 +2,8 @@ import React from "react";
 
 import { useHistory } from "react-router";
 
+import background from "../../assets/images/background.png";
+
 import { Button } from "primereact/button";
 
 type ExceptionProps = {
@@ -13,13 +15,13 @@ export function Exception(props: ExceptionProps) {
     const history = useHistory();
 
     function goToDashboard() {
-        history.push("/d");
+        history.push("/");
     }
 
     return (
         <div className="exception-body relative overflow-hidden h-screen text-center flex align-items-center justify-content-center">
             <img
-                src="assets/images/ProstavaBot2.png"
+                src={background}
                 alt="prostava-back"
                 className="absolute h-full md:h-auto md:w-full top-0 left-0 opacity-10"
             />

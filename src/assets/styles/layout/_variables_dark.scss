@@ -1,6 +1,6 @@
 @import "_variables_common";
 
-$bodyBg: #121212 !default;
+$bodyBg: $shade900 !default;
 $textColor: rgba(255, 255, 255, 0.87) !default;
 $textSecondaryColor: rgba(255, 255, 255, 0.6) !default;
 $dividerColor: #383838 !default;
@@ -32,10 +32,6 @@ $slimSidebarWidth: 6rem !default;
 //search
 $searchBg: #121212 !default;
 $searchBorder: 1px solid $dividerColor !default;
-
-//footer
-$footerBg: #1e1e1e !default;
-$footerBorder: 1px solid transparent !default;
 
 //sidebar right
 $rightSidebarWidth: 16rem !default;

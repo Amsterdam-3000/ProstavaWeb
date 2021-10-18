@@ -774,12 +774,12 @@ $splitterGutterBg: rgba(255, 255, 255, 0.03);
 $splitterGutterHandleBg: $shade600;
 
 :root {
-    --surface-a: #{$shade800};
-    --surface-b: #{$shade900};
+    --surface-a: #{$shade900};
+    --surface-b: #{$shade800};
     --surface-c: #{$hoverBg};
     --surface-d: #{$shade600};
-    --surface-e: #{$shade800};
-    --surface-f: #{$shade800};
+    --surface-e: #{$shade100};
+    --surface-f: #{$shade000};
     --text-color: #{$shade000};
     --text-color-secondary: #{$shade100};
     --primary-color: #{$primaryColor};

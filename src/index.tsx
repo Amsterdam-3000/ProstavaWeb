@@ -1,22 +1,27 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
-import { ConnectedRouter } from "connected-react-router";
-// import { ApiProvider } from "@reduxjs/toolkit/query/react";
 
-import App from "./App";
-import { store } from "./app/store";
+import { store, persistor } from "./app/store";
 import { history } from "./app/history";
 
-// import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
-// import reportWebVitals from "./reportWebVitals";
+import "./index.scss";
+
+import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { ConnectedRouter } from "connected-react-router";
+import { AppWrapper } from "./features/app/AppWrapper";
+
+// import * as serviceWorkerRegistration from "./assets/scripts/serviceWorkerRegistration";
+// import reportWebVitals from "./assets/scripts/reportWebVitals";
 
 ReactDOM.render(
     <React.StrictMode>
         <Provider store={store}>
-            <ConnectedRouter history={history}>
-                <App />
-            </ConnectedRouter>
+            <PersistGate persistor={persistor}>
+                <ConnectedRouter history={history}>
+                    <AppWrapper />
+                </ConnectedRouter>
+            </PersistGate>
         </Provider>
     </React.StrictMode>,
     document.getElementById("root")
