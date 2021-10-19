@@ -10,7 +10,12 @@ import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Avatar } from "primereact/avatar";
 
-export function AppTopbar() {
+type AppTopbarProps = {
+    onShowSettings: React.MouseEventHandler<HTMLButtonElement>;
+    onShowProfile: React.MouseEventHandler<HTMLButtonElement>;
+};
+
+export function AppTopbar(params: AppTopbarProps) {
     const history = useHistory();
     const groupId = useParamGroupId();
     const user = useUser();
@@ -40,12 +45,24 @@ export function AppTopbar() {
                 disabled={groups?.length === 1 ? true : false}
                 dropdownIcon={groups?.length === 1 ? "" : "pi pi-chevron-down"}
             />
-            <Button icon="pi pi-cog" className="p-button-outlined" tooltip="Settings" loading={isGroupLoading} />
+            <Button
+                icon="pi pi-cog"
+                className="p-button-outlined"
+                loading={isGroupLoading}
+                tooltip="Settings"
+                tooltipOptions={{ position: "bottom" }}
+                onClick={params.onShowSettings}
+            />
         </div>
     );
 
     const endUser = (
-        <Button className="p-0 p-button-outlined profile-button" tooltip="Profile" loading={isUserLoading}>
+        <Button
+            className="p-0 p-button-outlined profile-button"
+            loading={isUserLoading}
+            tooltip="Profile"
+            tooltipOptions={{ position: "top" }}
+        >
             <Avatar image={groupUser?.photo} imageAlt={groupUser?.name} className="p-1" />
             <span className="profile-button-text hidden md:block p-2">{groupUser?.name}</span>
         </Button>

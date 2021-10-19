@@ -1,5 +1,5 @@
 /* Add your customizations of the theme styles here */
-@import "primeflex/utils";
+@import "primeflex/src/utils";
 
 @include surface-class("text", "color", $surfaceShades);
 @include surface-class("surface", "background-color", $surfaceShades);
@@ -42,9 +42,10 @@
     }
 }
 
+//TODO custom style file
 .p-button.p-button-outlined.profile-button .profile-button-text {
     background: linear-gradient(to left, var(--surface-a) 50%, transparent 50%);
-    background-size: 200%;
+    background-size: 200% 100%;
     background-position: right bottom;
     transition: background-position 0.5s ease-out;
 }

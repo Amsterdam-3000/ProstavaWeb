@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { useHistory } from "react-router";
 import { useSelector } from "react-redux";
@@ -7,9 +7,11 @@ import { useParamGroupId } from "../../hooks/group";
 import { api } from "../../app/services/prostava";
 import { setGroupId, selectStorageGroupId } from "./appSlice";
 
+import { Sidebar } from "primereact/sidebar";
 import { Exception } from "../exception/Exception";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
+import { GroupSettings } from "../settings/GroupSettings";
 
 export function App() {
     const history = useHistory();
@@ -30,6 +32,9 @@ export function App() {
     } = api.useGetGroupQuery(paramGroupId, {
         skip: !paramGroupId
     });
+
+    const [visibleSettings, setVisibleSettings] = useState(false);
+    const [visibleProfile, setVisibleProfile] = useState(false);
 
     useEffect(() => {
         if (!isGroupsSuccess) {
@@ -82,10 +87,16 @@ export function App() {
     return (
         <div className="layout-wrapper">
             <div className="layout-content-wrapper h-screen flex flex-column justify-content-between">
-                <AppTopbar />
+                <AppTopbar
+                    onShowProfile={() => setVisibleSettings(false)}
+                    onShowSettings={() => setVisibleSettings(true)}
+                />
                 <div className="layout-content px-4 py-6 flex-auto">1</div>
                 <AppFooter />
             </div>
+            <Sidebar visible={visibleSettings} onHide={() => setVisibleSettings(false)}>
+                <GroupSettings/>
+            </Sidebar>
         </div>
     );
 }
