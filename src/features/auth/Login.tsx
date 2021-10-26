@@ -11,6 +11,7 @@ import background from "../../assets/images/background.png";
 import { TLoginButton, TLoginButtonSize, TUser } from "react-telegram-auth";
 import { Avatar } from "primereact/avatar";
 import { Toast } from "primereact/toast";
+import { Button } from "primereact/button";
 
 export function Login() {
     const history = useHistory();
@@ -81,13 +82,14 @@ export function Login() {
                             requestAccess={"write"}
                         />
                     </div>
-                    <p className="text-secondary font-medium">
-                        Add{" "}
-                        <a href={`https://t.me/${process.env.REACT_APP_BOT_NAME}`} target="_blank" rel="noreferrer">
-                            {process.env.REACT_APP_BOT_NAME}
-                        </a>{" "}
-                        to your groups
-                    </p>
+                    <Button
+                        label="Add Bot to group"
+                        className="p-button-link"
+                        onClick={() => {
+                            window.open(`https://t.me/${process.env.REACT_APP_BOT_NAME}`, "_blank");
+                        }}
+                        icon="pi pi-send"
+                    ></Button>
                 </div>
             </div>
             <div className="login-image md:col-8 h-full hidden md:block overflow-hidden relative">
@@ -105,19 +107,14 @@ export function Login() {
                             </h5>
                         </div>
                     </div>
-                    <div className="image-footer flx align-cotent-center">
-                        <p className="font-medium">
-                            {process.env.REACT_APP_BOT_NAME}{" "}
-                            <a
-                                href="https://github.com/usebooz/ProstavaBot"
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-primary"
-                            >
-                                <i className="pi pi-github text-lg"></i>
-                            </a>
-                        </p>
-                    </div>
+                    <Button
+                        label="Show on Github"
+                        className="p-button-link font-medium"
+                        icon="pi pi-github"
+                        onClick={() => {
+                            window.open("https://github.com/usebooz/ProstavaBot", "_blank");
+                        }}
+                    ></Button>
                 </div>
             </div>
             <Toast ref={toast} className="w-11 sm:w-30rem" />

@@ -6,7 +6,7 @@ import { useAppSelector } from "./store";
 import { selectCurrentToken } from "../features/auth/authSlice";
 
 type User = {
-    id: number;
+    id: string;
     first_name: string;
     last_name?: string | undefined;
     username?: string | undefined;

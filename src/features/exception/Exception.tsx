@@ -6,7 +6,7 @@ import background from "../../assets/images/background.png";
 
 import { Button } from "primereact/button";
 
-type ExceptionProps = {
+interface ExceptionProps {
     title: string;
     detail: string;
 };

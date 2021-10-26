@@ -8,6 +8,7 @@ import { api } from "../../app/services/prostava";
 import { setGroupId, selectStorageGroupId } from "./appSlice";
 
 import { Sidebar } from "primereact/sidebar";
+import { Button } from "primereact/button";
 import { Exception } from "../exception/Exception";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
@@ -94,8 +95,18 @@ export function App() {
                 <div className="layout-content px-4 py-6 flex-auto">1</div>
                 <AppFooter />
             </div>
-            <Sidebar visible={visibleSettings} onHide={() => setVisibleSettings(false)}>
-                <GroupSettings/>
+            <Sidebar
+                visible={visibleSettings}
+                onHide={() => setVisibleSettings(false)}
+                className=""
+                icons={() => (
+                    <Button
+                        className="p-button-rounded p-button-outlined p-button-success p-0 h-2rem w-2rem mr-1"
+                        icon="pi pi-check"
+                    />
+                )}
+            >
+                <GroupSettings />
             </Sidebar>
         </div>
     );

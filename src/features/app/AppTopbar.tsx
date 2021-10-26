@@ -61,7 +61,7 @@ export function AppTopbar(params: AppTopbarProps) {
             className="p-0 p-button-outlined profile-button"
             loading={isUserLoading}
             tooltip="Profile"
-            tooltipOptions={{ position: "top" }}
+            tooltipOptions={{ position: "top", className: "" }}
         >
             <Avatar image={groupUser?.photo} imageAlt={groupUser?.name} className="p-1" />
             <span className="profile-button-text hidden md:block p-2">{groupUser?.name}</span>

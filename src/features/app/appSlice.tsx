@@ -4,14 +4,14 @@ import { api } from "../../app/services/prostava";
 import { RootState } from "../../app/store";
 
 type AppState = {
-    groupId: number | null;
+    groupId: string | null;
 };
 
 const slice = createSlice({
     name: "app",
     initialState: { groupId: null } as AppState,
     reducers: {
-        setGroupId: (state, action: PayloadAction<number>) => {
+        setGroupId: (state, action: PayloadAction<string>) => {
             state.groupId = action.payload;
         }
     },

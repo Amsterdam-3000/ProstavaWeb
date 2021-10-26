@@ -28,18 +28,21 @@
 
     &:after {
         border: solid transparent;
+        //TODO WTF?
+        border-width: 8px;
         border-color: rgba($overlayContentBg, 0);
         border-bottom-color: $overlayContentBg;
     }
 
     &:before {
         border: solid transparent;
+        //TODO WTF?
+        border-width: 10px;
 
-        @if (nth($overlayContentBorder, 2) == 'none') {
+        @if (nth($overlayContentBorder, 2) == "none") {
             border-color: rgba($overlayContentBg, 0);
             border-bottom-color: $overlayContentBg;
-        }
-        @else {
+        } @else {
             border-color: rgba(nth($overlayContentBorder, 3), 0);
             border-bottom-color: nth($overlayContentBorder, 3);
         }
@@ -51,10 +54,9 @@
         }
 
         &:before {
-            @if (nth($overlayContentBorder, 2) == 'none') {
+            @if (nth($overlayContentBorder, 2) == "none") {
                 border-top-color: $overlayContentBg;
-            }
-            @else {
+            } @else {
                 border-top-color: nth($overlayContentBorder, 3);
             }
         }
