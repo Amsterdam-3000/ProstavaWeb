@@ -6,8 +6,10 @@ import { RootState } from "../store";
 export interface BaseObject {
     id: string;
     name: string;
-    photo: string;
-    string: string;
+    link?: string;
+    emoji?: string;
+    photo?: string;
+    string?: string;
 }
 
 export interface Group extends BaseObject {
@@ -21,6 +23,7 @@ export interface Group extends BaseObject {
     pending_hours: number;
     calendar_apple: string;
     calendar_google: string;
+    readonly: boolean;
 }
 
 export interface User extends BaseObject {
@@ -39,7 +42,7 @@ export const api = createApi({
             return headers;
         }
     }),
-    tagTypes: ["Groups", "Group", "GroupLanguage"],
+    tagTypes: ["Groups", "Group"],
     endpoints: (builder) => ({
         //Auth
         login: builder.mutation<string, TUser>({
@@ -67,41 +70,24 @@ export const api = createApi({
             query: (groupId) => ({ url: `app/group/${groupId}` }),
             providesTags: (result, error, groupId) => [{ type: "Group", id: groupId }]
         }),
-        updateGroup: builder.mutation<void, { property?: keyof Group; group: Group }>({
-            query: ({ group }) => ({
+        updateGroup: builder.mutation<void, Group>({
+            query: (group) => ({
                 url: `app/group/${group.id}`,
                 method: "PATCH",
                 body: group
             }),
-            invalidatesTags: (result, error, { property, group }) => {
-                switch (property) {
-                    case "language":
-                        return [
-                            { type: "Group", id: group.id },
-                            { type: "GroupLanguage", id: group.id }
-                        ];
-                    default:
-                        return [{ type: "Group", id: group.id }];
-                }
-            },
-            onQueryStarted({ group }, { dispatch, queryFulfilled }) {
-                const patchResult = dispatch(
-                    api.util.updateQueryData("getGroup", group.id, (draft) => {
-                        Object.assign(draft, group);
-                    })
-                );
-                queryFulfilled.catch(patchResult.undo);
-            }
-        }),
-
-        //Settings
-        getGroupLanguages: builder.query<BaseObject[], string>({
-            query: (groupId) => ({ url: `app/group/${groupId}/languages` }),
-            providesTags: (result, error, groupId) => [{ type: "GroupLanguage", id: groupId }]
-        }),
-        getGroupCurrencies: builder.query<BaseObject[], string>({
-            query: (groupId) => ({ url: `app/group/${groupId}/currencies` }),
-            providesTags: (result, error, groupId) => [{ type: "GroupLanguage", id: groupId }]
+            invalidatesTags: (result, error, group) => [
+                { type: "Group", id: group.id },
+                { type: "Groups", id: group.id }
+            ]
+            // onQueryStarted(group, { dispatch, queryFulfilled }) {
+            //     const patchResult = dispatch(
+            //         api.util.updateQueryData("getGroup", group.id, (draft) => {
+            //             Object.assign(draft, group);
+            //         })
+            //     );
+            //     queryFulfilled.catch(patchResult.undo);
+            // }
         }),
 
         //User
@@ -110,6 +96,21 @@ export const api = createApi({
         }),
         getGroupUser: builder.query<User, { groupId: string; userId: string }>({
             query: (params) => ({ url: `app/group/${params.groupId}/user/${params.userId}` })
+        }),
+
+        //Global
+        getLanguages: builder.query<BaseObject[], string>({
+            query: (language) => ({ url: `global/${language}/languages` }),
+            //TODO New Lang Tag?
+            providesTags: (result, error) => ["Group"]
+        }),
+        getCurrencies: builder.query<BaseObject[], string>({
+            query: (language) => ({ url: `global/${language}/currencies` }),
+            //TODO New Lang Tag?
+            providesTags: (result, error) => ["Group"]
+        }),
+        getEmojiPhoto: builder.query<string, string>({
+            query: (emoji) => ({ url: `global/emojiPhoto/${emoji}` })
         })
     })
 });

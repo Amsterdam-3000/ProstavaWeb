@@ -50,11 +50,8 @@
 }
 
 .p-dropdown {
-    &.p-disabled {
-        opacity: 1;
-    }
     &:not(.p-disabled).p-focus {
-        z-index: 1;
+        // TODO Delete? z-index: 1;
     }
 }
 
@@ -65,6 +62,9 @@
         font-size: 0.75rem;
     }
 }
+
+
+
 
 //TODO custom style file
 .p-button.p-button-outlined.profile-button .profile-button-text {
@@ -80,7 +80,13 @@
     background-color: transparent;
 }
 
-.emoji-picker-panel.p-overlaypanel {
+.emoji-photo-string {
+    img {
+        height: 1.375rem;
+    }
+}
+
+.emoji-photo-picker-panel.p-overlaypanel {
     .p-overlaypanel-content {
         padding: 0;
         .emoji-mart {
@@ -89,10 +95,16 @@
         }
     }
 }
-
-.emoji-string {
-    img {
-        height: 1.375rem;
+.emoji-string-chips-panel.p-dialog {
+    .p-dialog-header {
+        padding: 1rem; 
+    }
+    .p-dialog-content {
+        padding: 0;
+        .emoji-mart {
+            border-width: 0;
+            background-color: $overlayContentBg;
+        }
     }
 }
 
@@ -104,7 +116,6 @@
         border-bottom-left-radius: $borderRadius;
     }
 }
-
 .input-slider.p-inputnumber {
     .p-inputtext {
         border-bottom-left-radius: 0;

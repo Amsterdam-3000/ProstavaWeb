@@ -5,7 +5,7 @@ import { Redirect, Route, Switch } from "react-router";
 import { PrivateRoute } from "../auth/PrivateRoute";
 import { App } from "../app/App";
 import { Login } from "../auth/Login";
-import { Exception } from "../exception/Exception";
+import { Exception } from "../pages/Exception";
 
 export function AppWrapper() {
     PrimeReact.ripple = true;

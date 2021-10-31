@@ -1,6 +1,8 @@
+import React from "react";
+import classNames from "classnames";
+
 import { InputNumber, InputNumberProps } from "primereact/inputnumber";
 import { Slider, SliderProps } from "primereact/slider";
-import React from "react";
 
 interface InputSliderProps extends InputNumberProps, Omit<Omit<SliderProps, "onChange">, "value"> {}
 
@@ -9,8 +11,13 @@ export function InputSlider(props: InputSliderProps) {
     const { id, ...sliderProps } = { ...props };
     return (
         <React.Fragment>
-            <InputNumber className="input-slider" {...inputNumberProps} />
-            <Slider className="input-slider" {...sliderProps} />
+            <InputNumber
+                className="input-slider"
+                {...inputNumberProps}
+                inputClassName={classNames({ "border-round": props.readOnly, "opacity-100": props.readOnly })}
+                disabled={props.disabled || props.readOnly}
+            />
+            {props.readOnly ? null : <Slider className="input-slider" {...sliderProps} />}
         </React.Fragment>
     );
 }

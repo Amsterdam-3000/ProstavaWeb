@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 
 import { useHistory } from "react-router";
 import { useSelector } from "react-redux";
@@ -7,12 +7,11 @@ import { useParamGroupId } from "../../hooks/group";
 import { api } from "../../app/services/prostava";
 import { setGroupId, selectStorageGroupId } from "./appSlice";
 
-import { Sidebar } from "primereact/sidebar";
-import { Button } from "primereact/button";
-import { Exception } from "../exception/Exception";
+import { Exception } from "../pages/Exception";
+import { Loading } from "../pages/Loading";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
-import { GroupSettings } from "../settings/GroupSettings";
+import { SettingsSidebar } from "../settings/SettingsSidebar";
 
 export function App() {
     const history = useHistory();
@@ -33,9 +32,6 @@ export function App() {
     } = api.useGetGroupQuery(paramGroupId, {
         skip: !paramGroupId
     });
-
-    const [visibleSettings, setVisibleSettings] = useState(false);
-    const [visibleProfile, setVisibleProfile] = useState(false);
 
     useEffect(() => {
         if (!isGroupsSuccess) {
@@ -67,14 +63,7 @@ export function App() {
     }, [isGroupSuccess, group, dispatch]);
 
     if (isGroupsLoading) {
-        //TODO Change To Skeletons
-        return (
-            <div>
-                <p>
-                    <i>wait...</i>
-                </p>
-            </div>
-        );
+        return <Loading />;
     }
     if (isGroupsError) {
         console.log(groupsError);
@@ -84,30 +73,18 @@ export function App() {
         return <Exception title="GROUP NOT FOUND" detail="Requested group does not exist" />;
     }
 
-    //transition: margin-left $animationDuration $animationTimingFunction;
+    //transition: margin-left $animationDuration $animationTimingFunction; ??
     return (
         <div className="layout-wrapper">
             <div className="layout-content-wrapper h-screen flex flex-column justify-content-between">
-                <AppTopbar
-                    onShowProfile={() => setVisibleSettings(false)}
-                    onShowSettings={() => setVisibleSettings(true)}
-                />
+                <AppTopbar />
                 <div className="layout-content px-4 py-6 flex-auto">1</div>
                 <AppFooter />
             </div>
-            <Sidebar
-                visible={visibleSettings}
-                onHide={() => setVisibleSettings(false)}
-                className=""
-                icons={() => (
-                    <Button
-                        className="p-button-rounded p-button-outlined p-button-success p-0 h-2rem w-2rem mr-1"
-                        icon="pi pi-check"
-                    />
-                )}
-            >
-                <GroupSettings />
-            </Sidebar>
+            <SettingsSidebar
+                visible={history.location.pathname.endsWith("/settings")}
+                onHide={() => history.push(history.location.pathname.replace("/settings", ""))}
+            />
         </div>
     );
 }

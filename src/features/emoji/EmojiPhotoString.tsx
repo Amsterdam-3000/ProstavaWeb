@@ -1,13 +1,13 @@
 import React from "react";
 
-interface EmojiStringProps {
+interface EmojiPhotoStringProps {
     name: string;
     photo: string;
 };
 
-export function EmojiString(props: EmojiStringProps) {
+export function EmojiPhotoString(props: EmojiPhotoStringProps) {
     return (
-        <div className="emoji-string flex">
+        <div className="emoji-photo-string flex">
             <img alt={props.name} src={props.photo} className="mr-1" />
             <span>{props.name}</span>
         </div>

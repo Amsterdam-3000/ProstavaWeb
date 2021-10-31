@@ -3,19 +3,14 @@ import React from "react";
 import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/group";
 import { useUser } from "../../hooks/user";
-import { api, Group } from "../../app/services/prostava";
+import { api, BaseObject } from "../../app/services/prostava";
 
 import { Menubar } from "primereact/menubar";
-import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import { Avatar } from "primereact/avatar";
+import { Dropdown } from "../prime/Dropdown";
 
-type AppTopbarProps = {
-    onShowSettings: React.MouseEventHandler<HTMLButtonElement>;
-    onShowProfile: React.MouseEventHandler<HTMLButtonElement>;
-};
-
-export function AppTopbar(params: AppTopbarProps) {
+export function AppTopbar() {
     const history = useHistory();
     const groupId = useParamGroupId();
     const user = useUser();
@@ -26,11 +21,6 @@ export function AppTopbar(params: AppTopbarProps) {
         { skip: !(groupId && user) }
     );
 
-    const onGroupChange = (params: DropdownChangeParams) => {
-        const group: Group = params.value;
-        history.push(`/app/${group.id.toString()}`);
-    };
-
     const startGroup = (
         <div className="p-inputgroup">
             <span className="p-inputgroup-addon p-0">
@@ -39,11 +29,12 @@ export function AppTopbar(params: AppTopbarProps) {
             <Dropdown
                 value={{ id: group?.id }}
                 options={groups}
-                onChange={onGroupChange}
+                onChange={(e) => {
+                    history.push(`/app/${(e.value as BaseObject).id}`);
+                }}
                 dataKey="id"
                 optionLabel="name"
-                disabled={groups?.length === 1 ? true : false}
-                dropdownIcon={groups?.length === 1 ? "" : "pi pi-chevron-down"}
+                readOnly={groups?.length === 1}
             />
             <Button
                 icon="pi pi-cog"
@@ -51,7 +42,9 @@ export function AppTopbar(params: AppTopbarProps) {
                 loading={isGroupLoading}
                 tooltip="Settings"
                 tooltipOptions={{ position: "bottom" }}
-                onClick={params.onShowSettings}
+                onClick={(e) => {
+                    history.push(`${history.location.pathname}/settings`);
+                }}
             />
         </div>
     );
