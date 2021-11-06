@@ -16,11 +16,6 @@ const slice = createSlice({
             state.token = payload;
         });
     }
-    // extraReducers: (builder) => {
-    //     builder.addCase(PURGE, (state) => {
-    //         customEntityAdapter.removeAll(state);
-    //     });
-    // }
 });
 
 export default slice;

@@ -4,6 +4,7 @@ import { useHistory } from "react-router";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/store";
 import { useParamGroupId } from "../../hooks/group";
+import { useParamUserId, useUser } from "../../hooks/user";
 import { api } from "../../app/services/prostava";
 import { setGroupId, selectStorageGroupId } from "./appSlice";
 
@@ -12,6 +13,7 @@ import { Loading } from "../pages/Loading";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
 import { SettingsSidebar } from "../settings/SettingsSidebar";
+import { ProfileSidebar } from "../profile/ProfileSidebar";
 
 export function App() {
     const history = useHistory();
@@ -25,14 +27,29 @@ export function App() {
     } = api.useGetGroupsQuery();
     const storageGroupId = useSelector(selectStorageGroupId);
     const paramGroupId = useParamGroupId();
+    const paramUserId = useParamUserId();
     const {
         data: group,
+        isLoading: isGroupLoading,
         isSuccess: isGroupSuccess,
         isError: isGroupError
     } = api.useGetGroupQuery(paramGroupId, {
         skip: !paramGroupId
     });
+    const user = useUser();
+    const { data: groupUser, isLoading: isUserLoading } = api.useGetGroupUserQuery(
+        { groupId: paramGroupId, userId: user!.id },
+        { skip: !(paramGroupId && user) }
+    );
 
+    //Delete '/' from end of the url
+    useEffect(() => {
+        if (history.location.pathname.endsWith("/")) {
+            history.replace(history.location.pathname.replace(/\/$/, ""));
+        }
+    }, [history]);
+
+    //Back to Login page for users without groups
     useEffect(() => {
         if (!isGroupsSuccess) {
             return;
@@ -42,6 +59,7 @@ export function App() {
         }
     }, [isGroupsSuccess, groups, history]);
 
+    //Add groupId from first Group to url
     useEffect(() => {
         if (paramGroupId) {
             return;
@@ -49,20 +67,35 @@ export function App() {
         if (!storageGroupId) {
             return;
         }
-        history.replace(`/app/${storageGroupId.toString()}`);
+        history.replace(`/app/${storageGroupId}`);
     }, [paramGroupId, storageGroupId, history]);
 
+    //Set groupId to locale storage
     useEffect(() => {
         if (!isGroupSuccess) {
             return;
         }
-        if (!group?.id) {
+        if (!group) {
             return;
         }
         dispatch(setGroupId(group.id));
     }, [isGroupSuccess, group, dispatch]);
 
-    if (isGroupsLoading) {
+    //Add userId to url
+    useEffect(() => {
+        if (paramUserId) {
+            return;
+        }
+        if (!groupUser) {
+            return;
+        }
+        if (!history.location.pathname.endsWith("/profile")) {
+            return;
+        }
+        history.replace(`${history.location.pathname}/${groupUser.id}`);
+    }, [paramUserId, groupUser, history, history.location]);
+
+    if (isGroupsLoading || isGroupLoading || isUserLoading) {
         return <Loading />;
     }
     if (isGroupsError) {
@@ -73,7 +106,6 @@ export function App() {
         return <Exception title="GROUP NOT FOUND" detail="Requested group does not exist" />;
     }
 
-    //transition: margin-left $animationDuration $animationTimingFunction; ??
     return (
         <div className="layout-wrapper">
             <div className="layout-content-wrapper h-screen flex flex-column justify-content-between">
@@ -81,10 +113,8 @@ export function App() {
                 <div className="layout-content px-4 py-6 flex-auto">1</div>
                 <AppFooter />
             </div>
-            <SettingsSidebar
-                visible={history.location.pathname.endsWith("/settings")}
-                onHide={() => history.push(history.location.pathname.replace("/settings", ""))}
-            />
+            <SettingsSidebar position="left" />
+            <ProfileSidebar position="right" />
         </div>
     );
 }

@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import { Dropdown as DropdownPrime, DropdownProps as DropdownPrimeProps } from "primereact/dropdown";
 
-interface DropdownProps extends DropdownPrimeProps {
+export interface DropdownProps extends DropdownPrimeProps {
     readOnly?: boolean;
     loading?: boolean;
 }

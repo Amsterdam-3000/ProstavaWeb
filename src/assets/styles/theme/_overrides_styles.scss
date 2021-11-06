@@ -49,22 +49,34 @@
     }
 }
 
-.p-dropdown {
-    &:not(.p-disabled).p-focus {
-        // TODO Delete? z-index: 1;
-    }
-}
-
 .field {
-    label {
-        padding-left: nth($inputPadding, 2);
-        color: $inputPlaceholderTextColor;
+    margin: $fieldMargin 0;
+}
+.p-float-label {
+    .p-inputwrapper-filled ~ label,
+    .p-inputwrapper-focus ~ label,
+    input.p-filled ~ label,
+    input:focus ~ label,
+    textarea.p-filled ~ label,
+    textarea:focus ~ label {
         font-size: 0.75rem;
     }
+    small {
+        font-size: 0.75rem;
+        position: absolute;
+        top: 100%;
+        line-height: 0.75;
+    }
 }
 
-
-
+.p-toast {
+    width: 91.6667%;
+}
+@media screen and (min-width: 576px) {
+    .p-toast {
+        width: 30rem;
+    }
+}
 
 //TODO custom style file
 .p-button.p-button-outlined.profile-button .profile-button-text {
@@ -80,26 +92,8 @@
     background-color: transparent;
 }
 
-.emoji-photo-string {
-    img {
-        height: 1.375rem;
-    }
-}
-
-.emoji-photo-picker-panel.p-overlaypanel {
+.emoji-picker-panel.p-overlaypanel {
     .p-overlaypanel-content {
-        padding: 0;
-        .emoji-mart {
-            border-width: 0;
-            background-color: $overlayContentBg;
-        }
-    }
-}
-.emoji-string-chips-panel.p-dialog {
-    .p-dialog-header {
-        padding: 1rem; 
-    }
-    .p-dialog-content {
         padding: 0;
         .emoji-mart {
             border-width: 0;

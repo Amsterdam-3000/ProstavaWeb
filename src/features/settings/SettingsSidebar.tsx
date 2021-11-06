@@ -1,78 +1,74 @@
-import React, { useState, useEffect, useRef } from "react";
-import momentTZ from "moment-timezone";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import classNames from "classnames";
 
+import { useForm, FormProvider, useFormState } from "react-hook-form";
+import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/group";
-import { api, BaseObject, Group } from "../../app/services/prostava";
+import { api } from "../../app/services/prostava";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
-import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Skeleton } from "primereact/skeleton";
 import { Menu } from "primereact/menu";
 import { MenuItem, MenuItemOptions } from "primereact/menuitem";
+import { Toast } from "primereact/toast";
+import { SettingsContent } from "./SettingsContent";
 
-import { EmojiPhotoPicker } from "../emoji/EmojiPhotoPicker";
-import { EmojiPhotoString } from "../emoji/EmojiPhotoString";
-import { InputSlider } from "../prime/InputSlider";
-import { InputNumber } from "../prime/InputNumber";
-import { Dropdown } from "../prime/Dropdown";
-import { EmojiStringChips } from "../emoji/EmojiStringChips";
-import { ProgressSpinner } from "primereact/progressspinner";
+interface SettingsSidebarProps extends Omit<SidebarProps, "onHide"> {}
 
-export function SettingsSidebar(props: SidebarProps) {
+export function SettingsSidebar(props: SettingsSidebarProps) {
+    const history = useHistory();
     const groupId = useParamGroupId();
-    const menu = useRef<Menu>(null);
+    const menuRef = useRef<Menu>(null);
+    const toastRef = useRef<Toast>(null);
 
-    const [currentGroup, setCurrentGroup] = useState<Group>();
-    const [isGroupChanged, setIsGroupChanged] = useState(false);
-
-    const { data: group, isLoading: isGroupLoading } = api.useGetGroupQuery(groupId, { skip: !groupId });
-    const [fetchLanguages, { data: languages, isFetching: isLanguagesFetching }] = api.useLazyGetLanguagesQuery();
-    const [fetchCurrencies, { data: currencies, isFetching: isCurrenciesFetching }] = api.useLazyGetCurrenciesQuery();
-    const [fetchEmojiPhoto, { data: emojiPhoto, isFetching: isEmojiPhotoFetching }] = api.useLazyGetEmojiPhotoQuery();
+    const { data: group } = api.useGetGroupQuery(groupId, { skip: !groupId });
     const [updateGroup, { isLoading: isGroupUpdating, isSuccess: isGroupUpdateSuccess, isError: isGroupUpdateError }] =
         api.useUpdateGroupMutation();
+    const [canUpdateGroup, setCanUpdateGroup] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
 
-    //Group from API is changed
+    const settingsForm = useForm({
+        defaultValues: useMemo(() => {
+            return group;
+        }, [group]),
+        mode: "onChange"
+    });
+    const { isDirty, isValid } = useFormState({ control: settingsForm.control });
+
+    //Show Settings
     useEffect(() => {
-        setCurrentGroup(group);
-    }, [group]);
-    //Current group is changed
+        if (!showSettings && /settings$/.test(history.location.pathname)) {
+            setTimeout(() => {
+                setShowSettings(true);
+            });
+        }
+        if (showSettings && !/settings$/.test(history.location.pathname)) {
+            setShowSettings(false);
+        }
+    }, [showSettings, history.location]);
+
+    //Sync Form with group
     useEffect(() => {
-        setIsGroupChanged(JSON.stringify(currentGroup) !== JSON.stringify(group));
-    }, [currentGroup, group]);
-    //Language has changed
+        settingsForm.reset(group);
+    }, [group, settingsForm]);
+
+    //Show Save button when Form changed
     useEffect(() => {
-        if (!currentGroup?.language) {
+        setCanUpdateGroup(isDirty && isValid);
+    }, [isDirty, isValid]);
+
+    //Show Toast message when Group updated
+    useEffect(() => {
+        if (!toastRef || (!isGroupUpdateSuccess && !isGroupUpdateError)) {
             return;
         }
-        fetchLanguages(currentGroup.language);
-        fetchCurrencies(currentGroup.language);
-    }, [currentGroup?.language, fetchLanguages, fetchCurrencies]);
-    //Emoji has changed
-    useEffect(() => {
-        if (!currentGroup?.emoji) {
-            return;
-        }
-        fetchEmojiPhoto(currentGroup.emoji);
-    }, [currentGroup?.emoji, fetchEmojiPhoto]);
+        toastRef.current?.show({
+            severity: isGroupUpdateSuccess ? "success" : "error",
+            summary: isGroupUpdateSuccess ? "SETTINGS SAVED" : "SETTINGS NOT SAVED",
+            detail: isGroupUpdateSuccess ? "Settings have been saved successfully" : "Failed to save settings"
+        });
+    }, [toastRef, isGroupUpdateSuccess, isGroupUpdateError]);
 
-    const changeSetting = (changedSetting: Partial<Group>) => {
-        const changedGroup = { ...currentGroup!, ...changedSetting };
-        setCurrentGroup(changedGroup);
-    };
-    const saveSettings = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        updateGroup(currentGroup!);
-    };
-    const cancelSettings = () => {
-        setCurrentGroup(group);
-        props.onHide();
-    };
-
-    const baseObjectTemplate = (object: BaseObject) => {
-        return <EmojiPhotoString name={object?.name} photo={object?.photo!} />;
-    };
     const calendarButtonTemplate = (item: MenuItem, options: MenuItemOptions) => {
         return (
             <a className={classNames(options.className)} target={item.target} href={item.url}>
@@ -85,7 +81,7 @@ export function SettingsSidebar(props: SidebarProps) {
         {
             label: "Add to Apple",
             icon: "pi pi-apple",
-            url: currentGroup?.calendar_apple,
+            url: group?.calendar_apple,
             target: "_blank",
             className: "text-0",
             template: calendarButtonTemplate
@@ -93,233 +89,52 @@ export function SettingsSidebar(props: SidebarProps) {
         {
             label: "Add to Google",
             icon: "pi pi-google",
-            url: currentGroup?.calendar_google,
+            url: group?.calendar_google,
             target: "_blank",
-            className: "text-blue-700",
+            className: "text-blue-800",
             template: calendarButtonTemplate
         }
     ];
 
     return (
-        <Sidebar
-            {...props}
-            icons={() => (
-                <React.Fragment>
-                    <Menu model={calendarMenuModel} popup ref={menu} />
-                    <Button
-                        label="Add to calendar"
-                        icon="pi pi-calendar-plus"
-                        className="p-button-link mr-5"
-                        onClick={(e) => menu?.current?.toggle(e)}
-                        loading={isGroupLoading}
-                    />
-                    <Button
-                        className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
-                            fadeoutup: !isGroupChanged,
-                            "opacity-0": !isGroupChanged,
-                            fadeinup: isGroupChanged,
-                            "opacity-1": isGroupChanged
-                        })}
-                        icon="pi pi-check"
-                        disabled={!isGroupChanged}
-                        onClick={saveSettings}
-                        loading={isGroupUpdating}
-                    />
-                </React.Fragment>
-            )}
-            onHide={cancelSettings}
-        >
-            {isGroupLoading ? (
-                <div className="h-screen flex align-items-center justify-content-center">
-                    <ProgressSpinner />
-                </div>
-            ) : (
-                <React.Fragment>
-                    <div className="field flex p-fluid">
-                        {isEmojiPhotoFetching ? (
-                            <Skeleton height="6rem" width="6rem" shape="circle" />
-                        ) : (
-                            <EmojiPhotoPicker
-                                src={emojiPhoto}
-                                alt={currentGroup?.name}
-                                width="60"
-                                height="60"
-                                //TODO Fix console error when select
-                                onSelect={(emoji) => {
-                                    changeSetting({ emoji: emoji });
-                                }}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        )}
-                        <span className="field ml-2 flex flex-column justify-content-center">
-                            <label htmlFor="group-settings-name">Group name</label>
-                            <InputText
-                                id="group-settings-name"
-                                value={currentGroup?.name}
-                                onChange={(e) => {
-                                    changeSetting({ name: e.target.value });
-                                }}
-                                disabled={currentGroup?.readonly || isGroupUpdating}
-                                className={classNames({ "opacity-100": currentGroup?.readonly })}
-                            />
-                        </span>
-                    </div>
-                    <div className="flex flex-column p-fluid">
-                        <span className="field">
-                            <label htmlFor="group-settings-language">Language</label>
-                            <Dropdown
-                                id="group-settings-language"
-                                value={{ id: currentGroup?.language }}
-                                options={languages}
-                                onChange={(e) => {
-                                    changeSetting({ language: (e.value as BaseObject).id });
-                                }}
-                                dataKey="id"
-                                optionLabel="name"
-                                valueTemplate={baseObjectTemplate}
-                                itemTemplate={baseObjectTemplate}
-                                readOnly={currentGroup?.readonly}
-                                loading={isLanguagesFetching}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label htmlFor="group-settings-currency">Currency</label>
-                            <Dropdown
-                                id="group-settings-currency"
-                                value={{ id: currentGroup?.currency }}
-                                options={currencies}
-                                onChange={(e) => {
-                                    changeSetting({ currency: (e.value as BaseObject).id });
-                                }}
-                                dataKey="id"
-                                optionLabel="name"
-                                valueTemplate={baseObjectTemplate}
-                                itemTemplate={baseObjectTemplate}
-                                readOnly={currentGroup?.readonly}
-                                loading={isCurrenciesFetching || isLanguagesFetching}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label htmlFor="group-settings-timezone">Time Zone</label>
-                            <Dropdown
-                                id="group-settings-timezone"
-                                value={{ id: currentGroup?.timezone }}
-                                //TODO Back? Handler?
-                                options={momentTZ.tz.names().map((timezone) => ({ id: timezone, label: timezone }))}
-                                onChange={(e) => {
-                                    changeSetting({ timezone: (e.value as BaseObject).id });
-                                }}
-                                dataKey="id"
-                                filter
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label htmlFor="group-settings-types">Prostava types</label>
-                            <EmojiStringChips
-                                id="group-settings-types"
-                                value={currentGroup?.prostava_types?.map((prostavaType) => prostavaType.string)}
-                                onRemove={(e) => {
-                                    changeSetting({
-                                        prostava_types: currentGroup?.prostava_types.filter(
-                                            (prostavaType) => prostavaType.string !== e.value[0]
-                                        )
-                                    });
-                                }}
-                                onAdd={(emojiToken) => {
-                                    changeSetting({
-                                        prostava_types: [...currentGroup?.prostava_types!, emojiToken]
-                                    });
-                                }}
-                                allowDuplicate={false}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label htmlFor="group-settings-days">Days before prostava expiry</label>
-                            <InputNumber
-                                id="group-settings-days"
-                                value={currentGroup?.create_days_ago}
-                                allowEmpty={false}
-                                prefix="Expires in "
-                                suffix=" days"
-                                showButtons
-                                incrementButtonClassName="p-button-outlined"
-                                decrementButtonClassName="p-button-outlined"
-                                min={0}
-                                //TODO Max <9999?
-                                onChange={(e) => {
-                                    changeSetting({ create_days_ago: e.value });
-                                }}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label htmlFor="group-settings-hours">Hours to complete prostava</label>
-                            <InputNumber
-                                id="group-settings-hours"
-                                value={currentGroup?.pending_hours}
-                                allowEmpty={false}
-                                prefix="Completed in "
-                                suffix=" hours"
-                                showButtons
-                                incrementButtonClassName="p-button-outlined"
-                                decrementButtonClassName="p-button-outlined"
-                                min={0}
-                                //TODO Max <999?
-                                onChange={(e) => {
-                                    changeSetting({ pending_hours: e.value });
-                                }}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label id="123" htmlFor="group-settings-count">
-                                Total number of participants
-                            </label>
-                            <InputSlider
-                                id="group-settings-count"
-                                value={currentGroup?.chat_members_count}
-                                allowEmpty={false}
-                                suffix={` participants out of ${10} members`}
-                                min={0}
-                                //TODO Max of groups
-                                max={10}
-                                onChange={(e) => {
-                                    changeSetting({ chat_members_count: e.value });
-                                }}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                        <span className="field">
-                            <label id="123" htmlFor="group-settings-percentage">
-                                Minimum of participants to approve prostava
-                            </label>
-                            <InputSlider
-                                id="group-settings-percentage"
-                                value={currentGroup?.participants_min_percent}
-                                allowEmpty={false}
-                                suffix="% required for approval"
-                                min={0}
-                                max={100}
-                                onChange={(e) => {
-                                    changeSetting({ participants_min_percent: e.value });
-                                }}
-                                readOnly={currentGroup?.readonly}
-                                disabled={isGroupUpdating}
-                            />
-                        </span>
-                    </div>
-                </React.Fragment>
-            )}
-        </Sidebar>
+        <FormProvider {...settingsForm}>
+            <Sidebar
+                {...props}
+                icons={() => (
+                    <React.Fragment>
+                        <Menu model={calendarMenuModel} popup ref={menuRef} />
+                        <Button
+                            label="Add to calendar"
+                            icon="pi pi-calendar-plus"
+                            className="p-button-link mr-5"
+                            onClick={(e) => menuRef?.current?.toggle(e)}
+                            loading={isGroupUpdating}
+                        />
+                        <Button
+                            className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
+                                fadeoutup: !canUpdateGroup,
+                                "opacity-0": !canUpdateGroup,
+                                fadeinup: canUpdateGroup,
+                                "opacity-1": canUpdateGroup
+                            })}
+                            icon="pi pi-check"
+                            disabled={!canUpdateGroup}
+                            onClick={() => {
+                                updateGroup(settingsForm.getValues());
+                            }}
+                            loading={isGroupUpdating}
+                        />
+                    </React.Fragment>
+                )}
+                visible={showSettings}
+                onHide={() => {
+                    settingsForm.reset(group);
+                    history.push(history.location.pathname.replace(/\/settings$/, ""));
+                }}
+            >
+                <SettingsContent group={group!} disabled={isGroupUpdating} />
+                <Toast ref={toastRef} />
+            </Sidebar>
+        </FormProvider>
     );
 }

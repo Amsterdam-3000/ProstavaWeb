@@ -39,7 +39,7 @@
 }
 
 .p-float-label > label.p-error {
-    color: $errorColor;
+    color: $errorColor !important;
 }
 
 .p-input-icon-left > i:first-of-type,

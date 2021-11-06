@@ -17,23 +17,22 @@ export function Login() {
     const history = useHistory();
     const location = useAppSelector(selectLocation);
     const [login] = api.useLoginMutation();
-    const toast = useRef<Toast>(null);
+    const toastRef = useRef<Toast>(null);
 
     useEffect(() => {
-        if (!toast.current) {
+        if (!toastRef.current) {
             return;
         }
         if (!location.state?.error) {
             return;
         }
-        toast.current.show({
+        toastRef.current.show({
             severity: "error",
             summary: location.state.error.name,
             detail: location.state.error.message,
             life: 3000,
-            contentClassName: ""
         });
-    }, [location, toast]);
+    }, [location, toastRef]);
 
     async function authHandler(authUser: TUser) {
         try {
@@ -41,13 +40,11 @@ export function Login() {
             history.push(location.state?.from ? location.state.from.pathname : "/");
         } catch (error) {
             console.log(error);
-            if (toast.current) {
-                toast.current.show({
+            if (toastRef.current) {
+                toastRef.current.show({
                     severity: "error",
                     summary: "ACCESS DENIED",
-                    detail: "You do not have the necessary permissions",
-                    life: 3000,
-                    contentClassName: ""
+                    detail: "You do not have the necessary permissions"
                 });
             }
         }
@@ -117,7 +114,7 @@ export function Login() {
                     ></Button>
                 </div>
             </div>
-            <Toast ref={toast} className="w-11 sm:w-30rem" />
+            <Toast ref={toastRef} />
         </div>
     );
 }

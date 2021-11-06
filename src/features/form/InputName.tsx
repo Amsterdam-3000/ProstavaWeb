@@ -1,0 +1,40 @@
+import React from "react";
+import classNames from "classnames";
+
+import { useController, useFormContext } from "react-hook-form";
+
+import { InputText, InputTextProps } from "../prime/InputText";
+
+export interface InputNameProps extends InputTextProps {
+    name: string;
+}
+
+export function InputName(props: InputNameProps) {
+    const { setValue } = useFormContext();
+    const { field, fieldState } = useController({
+        name: props.name,
+        rules: {
+            required: "Name is required",
+            pattern: { value: /^\p{L}.*$/u, message: "Name must start with letter" }
+        }
+    });
+
+    if (field.value === undefined) {
+        return null;
+    }
+
+    return (
+        <InputText
+            {...props}
+            value={field.value}
+            onChange={(e) => {
+                //TODO WTF?
+                setValue(field.name, e.target.value, { shouldDirty: true, shouldValidate: true, shouldTouch: true });
+                //field.onChange(e.target.value);
+            }}
+            className={classNames(props.className, {
+                "p-invalid": fieldState.invalid
+            })}
+        />
+    );
+}

@@ -1,6 +1,7 @@
 import jwtDecode from "jwt-decode";
 
 import { useMemo } from "react";
+import { useParams } from "react-router";
 import { useAppSelector } from "./store";
 
 import { selectCurrentToken } from "../features/auth/authSlice";
@@ -29,3 +30,5 @@ export const useUser = () => {
     };
     return useMemo(() => getUser(currentToken), [currentToken]);
 };
+
+export const useParamUserId = () => useParams<{ userId: string }>().userId;

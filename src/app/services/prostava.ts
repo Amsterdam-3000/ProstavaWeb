@@ -10,7 +10,10 @@ export interface BaseObject {
     emoji?: string;
     photo?: string;
     string?: string;
+    readonly?: boolean;
 }
+
+export type BaseObjectProperty = keyof BaseObject;
 
 export interface Group extends BaseObject {
     language: string;
@@ -19,11 +22,11 @@ export interface Group extends BaseObject {
     timezone: string;
     create_days_ago: number;
     chat_members_count: number;
+    chat_members_all: number;
     participants_min_percent: number;
     pending_hours: number;
     calendar_apple: string;
     calendar_google: string;
-    readonly: boolean;
 }
 
 export interface User extends BaseObject {
@@ -80,6 +83,7 @@ export const api = createApi({
                 { type: "Group", id: group.id },
                 { type: "Groups", id: group.id }
             ]
+            //TODO ???DELETE???
             // onQueryStarted(group, { dispatch, queryFulfilled }) {
             //     const patchResult = dispatch(
             //         api.util.updateQueryData("getGroup", group.id, (draft) => {
