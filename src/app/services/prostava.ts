@@ -1,51 +1,74 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { TUser } from "react-telegram-auth";
+import { BaseObject } from "./base";
+import { userApi } from "./user";
 
-import { RootState } from "../store";
+export enum ProstavaStatus {
+    New = "new",
+    Pending = "pending",
+    Approved = "approved",
+    Rejected = "rejected"
+}
 
-export type Group = {
-    id: number;
-    name: string;
-    photo: string;
-};
+export interface ProstavaVenue extends BaseObject {
+    address: string;
+    longitude: number;
+    latitude: number;
+}
 
-export type User = {
-    id: number;
-    name: string;
-    photo: string;
-    link: string;
-};
+export interface ProstavaParticipant {
+    user: BaseObject;
+    rating: number;
+}
 
-export const api = createApi({
-    baseQuery: fetchBaseQuery({
-        baseUrl: `${process.env.REACT_APP_BOT_API_URL}/api`,
-        prepareHeaders: (headers, { getState }) => {
-            const token = (getState() as RootState).auth.token;
-            if (token) {
-                headers.set("authorization", `Bearer ${token}`);
-            }
-            return headers;
-        }
-    }),
+export interface Prostava extends BaseObject {
+    author: BaseObject;
+    status: ProstavaStatus;
+    creator: BaseObject;
+    is_request: boolean;
+    is_preview: boolean;
+    rating: number;
+    date: Date;
+    timezone: string;
+    venue: ProstavaVenue;
+    amount?: number;
+    currency?: string;
+    participants?: ProstavaParticipant[];
+    participants_min_count?: number;
+    participants_max_count?: number;
+    creation_date?: Date;
+    closing_date?: Date;
+}
+
+export const prostavaApi = userApi.injectEndpoints({
     endpoints: (builder) => ({
-        login: builder.mutation<string, TUser>({
-            query: (authUser) => ({
-                url: "auth/login",
-                method: "POST",
-                body: authUser
-            })
-        }),
-        getGroups: builder.query<Group[], void>({
-            query: () => ({ url: "app/groups" })
-        }),
-        getGroup: builder.query<Group, number>({
-            query: (groupId) => ({ url: `app/group/${groupId}` })
-        }),
-        getGroupUsers: builder.query<User[], number>({
-            query: (groupId) => ({ url: `app/group/${groupId}/users` })
-        }),
-        getGroupUser: builder.query<User, { groupId: number; userId: number }>({
-            query: (params) => ({ url: `app/group/${params.groupId}/user/${params.userId}` })
+        getProstavas: builder.query<Prostava[], string>({
+            query: (groupId) => ({ url: `app/group/${groupId}/prostavas` }),
+            providesTags: (result) =>
+                result
+                    ? [
+                          ...result.map((prostava) => ({ type: "Prostavas", id: prostava.id } as const)),
+                          { type: "Prostavas", id: "ALL" }
+                      ]
+                    : [{ type: "Prostavas", id: "ALL" }]
         })
     })
 });
+
+export const useGetRemindersQuery = (groupId: string) =>
+    prostavaApi.useGetProstavasQuery(groupId, {
+        skip: !groupId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.filter((prostava) => prostava.status === ProstavaStatus.New)
+        })
+    });
+
+export const useGetHistoryQuery = (groupId: string) =>
+    prostavaApi.useGetProstavasQuery(groupId, {
+        skip: !groupId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.filter(
+                (prostava) => prostava.status === ProstavaStatus.Approved || prostava.status === ProstavaStatus.Rejected
+            )
+        })
+    });

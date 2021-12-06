@@ -3,70 +3,80 @@ import React from "react";
 import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/group";
 import { useUser } from "../../hooks/user";
-import { api, Group } from "../../app/services/prostava";
+import { api, BaseObject } from "../../app/services";
 
 import { Menubar } from "primereact/menubar";
-import { Dropdown, DropdownChangeParams } from "primereact/dropdown";
 import { Button } from "primereact/button";
-import { Avatar } from "primereact/avatar";
+import { MenuItem } from "primereact/menuitem";
+import { ProfileButton } from "../profile/ProfileButton";
+import { Avatar } from "../prime/Avatar";
+import { Dropdown } from "../prime/Dropdown";
 
-type AppTopbarProps = {
-    onShowSettings: React.MouseEventHandler<HTMLButtonElement>;
-    onShowProfile: React.MouseEventHandler<HTMLButtonElement>;
-};
-
-export function AppTopbar(params: AppTopbarProps) {
+export function AppTopbar() {
     const history = useHistory();
     const groupId = useParamGroupId();
     const user = useUser();
     const { data: groups } = api.useGetGroupsQuery();
-    const { data: group, isLoading: isGroupLoading } = api.useGetGroupQuery(groupId, { skip: !groupId });
-    const { data: groupUser, isLoading: isUserLoading } = api.useGetGroupUserQuery(
+    const { data: group, isFetching: isGroupChanging } = api.useGetGroupQuery(groupId, { skip: !groupId });
+    const { data: groupUser, isFetching: isUserChanging } = api.useGetUserQuery(
         { groupId: groupId, userId: user!.id },
         { skip: !(groupId && user) }
     );
 
-    const onGroupChange = (params: DropdownChangeParams) => {
-        const group: Group = params.value;
-        history.push(`/app/${group.id.toString()}`);
-    };
-
     const startGroup = (
         <div className="p-inputgroup">
-            <span className="p-inputgroup-addon p-0">
-                <Avatar image={group?.photo} imageAlt={group?.name} className="p-1" />
+            <span className="p-inputgroup-addon p-0 min-w-min surface-a">
+                <Avatar image={group?.photo} imageAlt={group?.name} loading={isGroupChanging} imageHasBackground />
             </span>
             <Dropdown
                 value={{ id: group?.id }}
                 options={groups}
-                onChange={onGroupChange}
+                onChange={(e) => {
+                    history.push(`/app/${(e.value as BaseObject).id}`);
+                }}
                 dataKey="id"
                 optionLabel="name"
-                disabled={groups?.length === 1 ? true : false}
-                dropdownIcon={groups?.length === 1 ? "" : "pi pi-chevron-down"}
+                disabled={isGroupChanging}
+                readOnly={groups?.length === 1}
             />
             <Button
                 icon="pi pi-cog"
                 className="p-button-outlined"
-                loading={isGroupLoading}
                 tooltip="Settings"
                 tooltipOptions={{ position: "bottom" }}
-                onClick={params.onShowSettings}
+                onClick={(e) => {
+                    history.push(`${history.location.pathname}/settings`);
+                }}
+                disabled={isGroupChanging}
             />
         </div>
     );
 
     const endUser = (
-        <Button
-            className="p-0 p-button-outlined profile-button"
-            loading={isUserLoading}
-            tooltip="Profile"
-            tooltipOptions={{ position: "top" }}
-        >
-            <Avatar image={groupUser?.photo} imageAlt={groupUser?.name} className="p-1" />
-            <span className="profile-button-text hidden md:block p-2">{groupUser?.name}</span>
-        </Button>
+        <ProfileButton
+            profile={{ ...groupUser! }}
+            className="border-primary"
+            disabled={isUserChanging}
+            loading={isUserChanging}
+        />
     );
 
-    return <Menubar className="border-noround" start={startGroup} end={endUser} />;
+    const menuItems: MenuItem[] = [
+        {
+            label: "Home",
+            icon: "pi pi-home",
+            command: () => {
+                history.push(`/app/${groupId}`);
+            }
+        },
+        {
+            label: "History",
+            icon: "pi pi-history",
+            command: () => {
+                history.push(`/app/${groupId}/history`);
+            }
+        }
+    ];
+
+    return <Menubar className="border-noround w-screen fixed z-5" start={startGroup} end={endUser} model={menuItems} />;
 }

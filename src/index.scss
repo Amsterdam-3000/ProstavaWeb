@@ -1,13 +1,11 @@
-
-@import "primeflex/primeflex.scss";
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
+@import "primeflex/primeflex.scss";
+@import "emoji-mart/css/emoji-mart.css";
 
 @media (prefers-color-scheme: light) {
-    @import "./assets/styles/theme/theme-light.scss";
-    @import "./assets/styles/layout/layout-light.scss";
+    @import "./assets/styles/theme_light.scss";
 }
 @media (prefers-color-scheme: dark) {
-    @import "./assets/styles/theme/theme-dark.scss";
-    @import "./assets/styles/layout/layout-dark.scss";
+    @import "./assets/styles/theme_dark.scss";
 }

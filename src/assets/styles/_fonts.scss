@@ -1,0 +1,35 @@
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    src: local("Inter"), local("Inter-Regular"),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */ url("../fonts/Inter-Regular.woff2") format("woff2"),
+        /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url("../fonts/Inter-Regular.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 500;
+    src: local("Inter Medium"), local("Inter-Medium"),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */ url("../fonts/Inter-Medium.woff2") format("woff2"),
+        /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url("../fonts/Inter-Medium.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 600;
+    src: local("Inter SemiBold"), local("Inter-SemiBold"),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */ url("../fonts/Inter-SemiBold.woff2") format("woff2"),
+        /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url("../fonts/Inter-SemiBold.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 700;
+    src: local("Inter Bold"), local("Inter-Bold"),
+        /* Chrome 26+, Opera 23+, Firefox 39+ */ url("../fonts/Inter-Bold.woff2") format("woff2"),
+        /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ url("../fonts/Inter-Bold.woff") format("woff");
+}
