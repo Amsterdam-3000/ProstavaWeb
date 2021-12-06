@@ -13,7 +13,7 @@ export function Dropdown(props: DropdownProps) {
         <DropdownPrime
             {...props!}
             disabled={props.disabled || props.readOnly}
-            className={classNames({ "opacity-100": props.readOnly })}
+            className={classNames(props.className, { "opacity-100": props.readOnly })}
             dropdownIcon={props.loading ? "pi pi-spin pi-spinner" : !props.readOnly ? "pi pi-chevron-down" : ""}
         />
     );

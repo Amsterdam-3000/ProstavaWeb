@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useController } from "react-hook-form";
-import { BaseObject } from "../../app/services/prostava";
+import { BaseObject } from "../../app/services/base";
 
 import { Dropdown, DropdownProps } from "../prime/Dropdown";
 

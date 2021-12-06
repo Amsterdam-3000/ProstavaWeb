@@ -9,7 +9,7 @@ import { Button } from "primereact/button";
 interface ExceptionProps {
     title: string;
     detail: string;
-};
+}
 
 export function Exception(props: ExceptionProps) {
     const history = useHistory();
@@ -24,6 +24,7 @@ export function Exception(props: ExceptionProps) {
                 src={background}
                 alt="prostava-back"
                 className="absolute h-full md:h-auto md:w-full top-0 left-0 opacity-10"
+                style={{ filter: "blur(4px)" }}
             />
 
             <div className="exception-content relative">

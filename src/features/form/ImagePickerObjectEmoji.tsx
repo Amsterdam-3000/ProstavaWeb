@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from "react";
 import classNames from "classnames";
 
-import { useController, useFormContext, useWatch } from "react-hook-form";
-import { api, BaseObject } from "../../app/services/prostava";
+import { useController, useFormContext } from "react-hook-form";
+import { api, BaseObject } from "../../app/services";
 
-import { EmojiPickerPanel } from "../emoji/EmojiPickerPanel";
-import { Skeleton } from "primereact/skeleton";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { EmojiPickerPanel } from "../emoji/EmojiPickerPanel";
+import { Avatar } from "../prime/Avatar";
 
 interface ImagePickerObjectEmojiProps {
     name: string;
@@ -20,56 +20,50 @@ export function ImagePickerObjectEmoji(props: ImagePickerObjectEmojiProps) {
 
     const [fetchEmojiPhoto, { data: emojiPhoto, isFetching: isEmojiPhotoFetching }] = api.useLazyGetEmojiPhotoQuery();
 
-    const { getValues, setValue } = useFormContext<BaseObject>();
-    const changedEmoji = useWatch({ name: props.name });
     const { field } = useController({ name: props.name });
+    const { getValues, setValue, watch } = useFormContext<BaseObject>();
 
     useEffect(() => {
-        if (!changedEmoji) {
-            return;
-        }
-        fetchEmojiPhoto(changedEmoji);
-    }, [changedEmoji, fetchEmojiPhoto]);
+        const subscription = watch((value, { name }) => {
+            if (name === "emoji") {
+                fetchEmojiPhoto(value.emoji!, true);
+            }
+        });
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [watch, fetchEmojiPhoto]);
 
     useEffect(() => {
         if (!emojiPhoto) {
             return;
         }
-        setValue("photo", emojiPhoto, { shouldDirty: true, shouldValidate: true, shouldTouch: true });
+        setValue("photo", emojiPhoto, {
+            shouldDirty: true,
+            shouldValidate: true,
+            shouldTouch: true
+        });
     }, [emojiPhoto, setValue]);
-
-    if (isEmojiPhotoFetching) {
-        return (
-            <Skeleton
-                height="5rem"
-                width="5rem"
-                shape="circle"
-                className={classNames(props.className, "flex-shrink-0")}
-            />
-        );
-    }
 
     return (
         <div className={classNames(props.className)}>
-            <span
-                className={classNames("p-component p-image surface-a border-circle p-3 inline-block", {
-                    "p-image-preview-container": !props.readOnly && !props.disabled,
-                    "p-disabled": props.disabled
-                })}
-                onClick={
-                    !props.readOnly && !props.disabled
-                        ? (e) => {
-                              overlayPanelRef.current?.toggle(e, null);
-                          }
-                        : undefined
-                }
-            >
-                <img src={getValues().photo} alt={getValues().name} width="48" height="44" />
-                {!props.readOnly && !props.disabled ? (
-                    <div className="p-image-preview-indicator text-white">
-                        <i className="p-image-preview-icon pi pi-user-edit"></i>
-                    </div>
-                ) : null}
+            <span className="p-image-preview-containr">
+                <Avatar
+                    image={getValues().photo}
+                    imageAlt={getValues().name}
+                    imageHasBackground
+                    shape="circle"
+                    size="xlarge"
+                    onClick={
+                        !props.readOnly && !props.disabled
+                            ? (e) => {
+                                  overlayPanelRef.current?.toggle(e, null);
+                              }
+                            : undefined
+                    }
+                    edit
+                    loading={isEmojiPhotoFetching}
+                />
             </span>
             <EmojiPickerPanel
                 overlayPanelRef={overlayPanelRef}

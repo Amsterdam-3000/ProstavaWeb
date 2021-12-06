@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { api } from "../../app/services/prostava";
+import { api } from "../../app/services";
 import { RootState } from "../../app/store";
 
 type AuthState = {
@@ -14,6 +14,9 @@ const slice = createSlice({
     extraReducers: (builder) => {
         builder.addMatcher(api.endpoints.login.matchFulfilled, (state, { payload }) => {
             state.token = payload;
+        });
+        builder.addMatcher(api.endpoints.logout.matchFulfilled, (state) => {
+            state.token = null;
         });
     }
 });

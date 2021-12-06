@@ -5,7 +5,7 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from "redux-persist/lib/storage";
 
 import { history } from "./history";
-import { api } from "./services/prostava";
+import { api } from "./services";
 import { authName, authReducer } from "../features/auth/authSlice";
 import { appName, appReducer } from "../features/app/appSlice";
 

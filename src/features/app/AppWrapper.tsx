@@ -13,7 +13,7 @@ export function AppWrapper() {
     return (
         <Switch>
             <PrivateRoute exact path="/" render={() => <Redirect to={{ pathname: "/app" }} />} />
-            <PrivateRoute path={["/app/:groupId/*/profile/:userId", "/app/:groupId", "/app"]} component={App} />
+            <PrivateRoute path={["/app/:groupId/*profile/:userId", "/app/:groupId", "/app"]} component={App} />
             <Route path="/login" component={Login} />
             <Route
                 path="*"

@@ -1,0 +1,26 @@
+/* Add your customizations of the theme variables here */
+
+//Theme
+$fontFamily: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+$horizontalMenuPadding: 0.625rem;
+$panelContentPadding: 0.625rem;
+$tableHeaderPadding: 0.625rem 0.625rem;
+$tableFooterPadding: 0.625rem 0.625rem;
+$tableHeaderCellPadding: 0.625rem 0.625rem;
+$tableFooterCellPadding: 0.625rem 0.625rem;
+$tableBodyCellPadding: 0.625rem 0.625rem;
+
+:root {
+    --border-radius: #{$borderRadius};
+}
+
+//Flex
+$fieldMargin: 1.25rem;
+$surfaceShades: "a", "b", "c", "d", "e", "f";
+
+//Custom
+$headerHeight: 3.75rem;
+$footerHeight: 3.75rem;
+$contentMinHeight: calc(100vh - 7.5rem);

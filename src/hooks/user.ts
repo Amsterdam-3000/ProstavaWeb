@@ -26,6 +26,9 @@ export const useUser = () => {
         if (user && Number(`${user.exp}000`) <= Date.now()) {
             user = null;
         }
+        if (user?.id) {
+            user.id = user?.id.toString();
+        }
         return user;
     };
     return useMemo(() => getUser(currentToken), [currentToken]);

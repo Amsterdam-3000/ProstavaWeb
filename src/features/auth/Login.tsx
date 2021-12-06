@@ -2,16 +2,16 @@ import React, { useEffect, useRef } from "react";
 
 import { useHistory } from "react-router";
 import { useAppSelector } from "../../hooks/store";
-import { api } from "../../app/services/prostava";
+import { api } from "../../app/services";
 import { selectLocation } from "../../app/history";
 
 import logo from "../../assets/images/logo.png";
 import background from "../../assets/images/background.png";
 
 import { TLoginButton, TLoginButtonSize, TUser } from "react-telegram-auth";
-import { Avatar } from "primereact/avatar";
 import { Toast } from "primereact/toast";
 import { Button } from "primereact/button";
+import { Avatar } from "../prime/Avatar";
 
 export function Login() {
     const history = useHistory();
@@ -30,11 +30,11 @@ export function Login() {
             severity: "error",
             summary: location.state.error.name,
             detail: location.state.error.message,
-            life: 3000,
+            life: 3000
         });
     }, [location, toastRef]);
 
-    async function authHandler(authUser: TUser) {
+    async function loginHandler(authUser: TUser) {
         try {
             await login(authUser).unwrap();
             history.push(location.state?.from ? location.state.from.pathname : "/");
@@ -53,7 +53,12 @@ export function Login() {
     return (
         <div className="login-body grid grid-nogutter h-screen">
             <div className="login-panel col md:col-4 h-full overflow-hidden relative">
-                <img src={background} alt="background" className="absolute h-full top-0 left-0 opacity-10 md:hidden" />
+                <img
+                    src={background}
+                    alt="background"
+                    className="absolute h-full top-0 left-0 opacity-10 md:hidden"
+                    style={{ filter: "blur(4px)" }}
+                />
                 <div className="login-panel-wrapper relative h-full text-center py-6 px-4 flex align-items-center flex-column">
                     <Avatar
                         image={logo}
@@ -75,22 +80,27 @@ export function Login() {
                             lang="en"
                             usePic={true}
                             cornerRadius={4}
-                            onAuthCallback={authHandler}
+                            onAuthCallback={loginHandler}
                             requestAccess={"write"}
                         />
                     </div>
                     <Button
                         label="Add Bot to group"
-                        className="p-button-link"
+                        className="p-button-text p-button-info"
                         onClick={() => {
                             window.open(`https://t.me/${process.env.REACT_APP_BOT_NAME}`, "_blank");
                         }}
-                        icon="pi pi-send"
+                        icon="pi pi-telegram"
                     ></Button>
                 </div>
             </div>
             <div className="login-image md:col-8 h-full hidden md:block overflow-hidden relative">
-                <img className="absolute w-full top-0 left-0 opacity-30" src={background} alt="background" />
+                <img
+                    className="absolute w-full top-0 left-0 opacity-30"
+                    src={background}
+                    alt="background"
+                    style={{ filter: "blur(2px)" }}
+                />
                 <div className="login-image-wrapper py-6 px-4 relative h-full flex align-items-center flex-column">
                     <div className="login-image-content flex-grow-1 flex justify-content-center flex-column">
                         <div className="login-image-text mb-5">

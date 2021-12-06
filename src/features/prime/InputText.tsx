@@ -6,11 +6,9 @@ import { InputText as InputTextPrime, InputTextProps as InputTextPrimeProps } fr
 export interface InputTextProps extends InputTextPrimeProps {}
 
 export function InputText(props: InputTextProps) {
-    const { ref, ...others } = { ...props };
-
     return (
         <InputTextPrime
-            {...others}
+            {...props}
             disabled={props.disabled || props.readOnly}
             className={classNames(props.className, { "opacity-100": props.readOnly })}
         />

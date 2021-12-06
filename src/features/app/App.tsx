@@ -1,19 +1,22 @@
 import React, { useEffect } from "react";
 
-import { useHistory } from "react-router";
+import { Route, Switch, useHistory } from "react-router";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../hooks/store";
 import { useParamGroupId } from "../../hooks/group";
 import { useParamUserId, useUser } from "../../hooks/user";
-import { api } from "../../app/services/prostava";
-import { setGroupId, selectStorageGroupId } from "./appSlice";
+import { api } from "../../app/services";
+import { setGroupId, selectStorageGroupId, setLanguage } from "./appSlice";
 
+import { BlockUI } from "primereact/blockui";
 import { Exception } from "../pages/Exception";
 import { Loading } from "../pages/Loading";
-import { AppTopbar } from "./AppTopbar";
-import { AppFooter } from "./AppFooter";
 import { SettingsSidebar } from "../settings/SettingsSidebar";
 import { ProfileSidebar } from "../profile/ProfileSidebar";
+import { Dashboard } from "../dashboard/Dashboard";
+import { History } from "../prostava/History";
+import { AppTopbar } from "./AppTopbar";
+import { AppFooter } from "./AppFooter";
 
 export function App() {
     const history = useHistory();
@@ -31,15 +34,16 @@ export function App() {
     const {
         data: group,
         isLoading: isGroupLoading,
+        isFetching: isGroupFetching,
         isSuccess: isGroupSuccess,
         isError: isGroupError
     } = api.useGetGroupQuery(paramGroupId, {
         skip: !paramGroupId
     });
     const user = useUser();
-    const { data: groupUser, isLoading: isUserLoading } = api.useGetGroupUserQuery(
+    const { data: groupUser, isLoading: isUserLoading } = api.useGetUserQuery(
         { groupId: paramGroupId, userId: user!.id },
-        { skip: !(paramGroupId && user) }
+        { skip: !(paramGroupId && user?.id) }
     );
 
     //Delete '/' from end of the url
@@ -79,6 +83,7 @@ export function App() {
             return;
         }
         dispatch(setGroupId(group.id));
+        dispatch(setLanguage(group.language));
     }, [isGroupSuccess, group, dispatch]);
 
     //Add userId to url
@@ -96,7 +101,7 @@ export function App() {
     }, [paramUserId, groupUser, history, history.location]);
 
     if (isGroupsLoading || isGroupLoading || isUserLoading) {
-        return <Loading />;
+        return <Loading background />;
     }
     if (isGroupsError) {
         console.log(groupsError);
@@ -110,7 +115,18 @@ export function App() {
         <div className="layout-wrapper">
             <div className="layout-content-wrapper h-screen flex flex-column justify-content-between">
                 <AppTopbar />
-                <div className="layout-content px-4 py-6 flex-auto">1</div>
+                <div className="layout-content flex-auto mt-header">
+                    <BlockUI
+                        className="min-h-content"
+                        blocked={isGroupFetching}
+                        template={<i className="pi pi-spin pi-spinner text-4xl" />}
+                    >
+                        <Switch>
+                            <Route path="*/history" component={History} />
+                            <Route path="*" component={Dashboard} />
+                        </Switch>
+                    </BlockUI>
+                </div>
                 <AppFooter />
             </div>
             <SettingsSidebar position="left" />

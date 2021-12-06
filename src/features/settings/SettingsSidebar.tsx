@@ -4,13 +4,16 @@ import classNames from "classnames";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
 import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/group";
-import { api } from "../../app/services/prostava";
+import { api } from "../../app/services";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
 import { Button } from "primereact/button";
-import { Menu } from "primereact/menu";
-import { MenuItem, MenuItemOptions } from "primereact/menuitem";
+import { MenuItem } from "primereact/menuitem";
 import { Toast } from "primereact/toast";
+import { Tooltip } from "primereact/tooltip";
+import { SpeedDial } from "primereact/speeddial";
+import { Loading } from "../pages/Loading";
+import { SpeedDialAction } from "../prime/SpeedDialAction";
 import { SettingsContent } from "./SettingsContent";
 
 interface SettingsSidebarProps extends Omit<SidebarProps, "onHide"> {}
@@ -18,17 +21,17 @@ interface SettingsSidebarProps extends Omit<SidebarProps, "onHide"> {}
 export function SettingsSidebar(props: SettingsSidebarProps) {
     const history = useHistory();
     const groupId = useParamGroupId();
-    const menuRef = useRef<Menu>(null);
     const toastRef = useRef<Toast>(null);
 
-    const { data: group } = api.useGetGroupQuery(groupId, { skip: !groupId });
+    const { data: group, isFetching: isGroupFetching } = api.useGetGroupQuery(groupId, { skip: !groupId });
     const [updateGroup, { isLoading: isGroupUpdating, isSuccess: isGroupUpdateSuccess, isError: isGroupUpdateError }] =
         api.useUpdateGroupMutation();
+
     const [canUpdateGroup, setCanUpdateGroup] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
 
     const settingsForm = useForm({
-        defaultValues: useMemo(() => {
+        defaultValues: useMemo(() => { 
             return group;
         }, [group]),
         mode: "onChange"
@@ -69,22 +72,14 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
         });
     }, [toastRef, isGroupUpdateSuccess, isGroupUpdateError]);
 
-    const calendarButtonTemplate = (item: MenuItem, options: MenuItemOptions) => {
-        return (
-            <a className={classNames(options.className)} target={item.target} href={item.url}>
-                <span className={classNames(options.iconClassName, item.className, item.icon)}></span>
-                <span className={classNames(options.labelClassName, item.className)}>{item.label}</span>
-            </a>
-        );
-    };
-    const calendarMenuModel: MenuItem[] = [
+    const groupMenuModel: MenuItem[] = [
         {
             label: "Add to Apple",
             icon: "pi pi-apple",
             url: group?.calendar_apple,
             target: "_blank",
             className: "text-0",
-            template: calendarButtonTemplate
+            template: SpeedDialAction
         },
         {
             label: "Add to Google",
@@ -92,7 +87,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
             url: group?.calendar_google,
             target: "_blank",
             className: "text-blue-800",
-            template: calendarButtonTemplate
+            template: SpeedDialAction
         }
     ];
 
@@ -102,13 +97,16 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                 {...props}
                 icons={() => (
                     <React.Fragment>
-                        <Menu model={calendarMenuModel} popup ref={menuRef} />
-                        <Button
-                            label="Add to calendar"
-                            icon="pi pi-calendar-plus"
-                            className="p-button-link mr-5"
-                            onClick={(e) => menuRef?.current?.toggle(e)}
-                            loading={isGroupUpdating}
+                        <Tooltip target=".group-menu .p-speeddial-action" position="bottom" />
+                        <Tooltip target=".p-speeddial-linear" content="Add to calendar" />
+                        <SpeedDial
+                            direction="right"
+                            showIcon="pi pi-calendar-plus"
+                            hideIcon="pi pi-calendar-times"
+                            className="group-menu relative mr-auto"
+                            buttonClassName="p-button-text"
+                            model={groupMenuModel}
+                            disabled={isGroupUpdating}
                         />
                         <Button
                             className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
@@ -132,7 +130,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                     history.push(history.location.pathname.replace(/\/settings$/, ""));
                 }}
             >
-                <SettingsContent group={group!} disabled={isGroupUpdating} />
+                {isGroupFetching ? <Loading /> : <SettingsContent group={group!} disabled={isGroupUpdating} />}
                 <Toast ref={toastRef} />
             </Sidebar>
         </FormProvider>

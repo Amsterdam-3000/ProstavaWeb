@@ -1,8 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import momentTZ from "moment-timezone";
 
-import { useWatch } from "react-hook-form";
-import { api, Group } from "../../app/services/prostava";
+import { useFormContext } from "react-hook-form";
+import { useAppDispatch } from "../../hooks/store";
+import { api, Group } from "../../app/services";
+import { setLanguage } from "../app/appSlice";
 
 import { Field } from "../form/Field";
 import { InputName } from "../form/InputName";
@@ -18,19 +20,34 @@ interface SettingsContentProps {
 }
 
 export function SettingsContent(props: SettingsContentProps) {
+    const dispatch = useAppDispatch();
+
     const [fetchLanguages, { data: languages, isFetching: isLanguagesFetching }] = api.useLazyGetLanguagesQuery();
     const [fetchCurrencies, { data: currencies, isFetching: isCurrenciesFetching }] = api.useLazyGetCurrenciesQuery();
 
-    const changedLanguage = useWatch({ name: "language" });
+    const { watch } = useFormContext<Group>();
 
-    //Refetch All Locale data
+    const fetchLocale = useCallback(
+        (language: string) => {
+            fetchLanguages(language, true);
+            fetchCurrencies(language, true);
+        },
+        [fetchLanguages, fetchCurrencies]
+    );
+
     useEffect(() => {
-        if (!changedLanguage) {
-            return;
-        }
-        fetchLanguages(changedLanguage);
-        fetchCurrencies(changedLanguage);
-    }, [changedLanguage, fetchLanguages, fetchCurrencies]);
+        fetchLocale(props.group.language);
+    }, [props.group.language, fetchLocale]);
+
+    useEffect(() => {
+        const subscription = watch((value, { name }) => {
+            if (name === "language") {
+                dispatch(setLanguage(value.language!));
+                fetchLocale(value.language!);
+            }
+        });
+        return () => subscription.unsubscribe();
+    }, [watch, fetchLocale, dispatch]);
 
     return (
         <React.Fragment>
@@ -39,9 +56,9 @@ export function SettingsContent(props: SettingsContentProps) {
                     name="emoji"
                     readOnly={props.group.readonly}
                     disabled={props.disabled}
-                    className="mr-2"
+                    className="mr-2 align-self-center"
                 />
-                <Field label="Group name" className="h-full">
+                <Field label="Group name" className="w-full">
                     <InputName
                         id="group-settings-name"
                         name="name"

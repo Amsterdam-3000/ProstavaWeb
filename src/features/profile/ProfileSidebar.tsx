@@ -5,30 +5,33 @@ import { useHistory } from "react-router";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
 import { useParamGroupId } from "../../hooks/group";
 import { useParamUserId } from "../../hooks/user";
-import { api } from "../../app/services/prostava";
+import { api } from "../../app/services";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
 import { Button } from "primereact/button";
-import { Menu } from "primereact/menu";
-import { MenuItem, MenuItemOptions } from "primereact/menuitem";
+import { SpeedDial } from "primereact/speeddial";
+import { Tooltip } from "primereact/tooltip";
 import { Toast } from "primereact/toast";
-// import { SettingsContent } from "./SettingsContent";
+import { ProfileContent } from "./ProfileContent";
+import { Loading } from "../pages/Loading";
+import { MenuItem } from "primereact/menuitem";
+import { SpeedDialAction } from "../prime/SpeedDialAction";
 
-interface ProfileSidebar extends Omit<SidebarProps, "onHide"> {}
+interface ProfileSidebarProps extends Omit<SidebarProps, "onHide"> {}
 
-export function ProfileSidebar(props: ProfileSidebar) {
+export function ProfileSidebar(props: ProfileSidebarProps) {
     const groupId = useParamGroupId();
     const userId = useParamUserId();
-    const menuRef = useRef<Menu>(null);
     const toastRef = useRef<Toast>(null);
     const history = useHistory();
 
-    const { data: user, isLoading: isUserLoading } = api.useGetGroupUserQuery(
+    const { data: user, isFetching: isUserFetching } = api.useGetUserQuery(
         { groupId: groupId, userId: userId },
         { skip: !(groupId && userId) }
     );
-    // const [updateGroup, { isLoading: isGroupUpdating, isSuccess: isGroupUpdateSuccess, isError: isGroupUpdateError }] =
-    //     api.useUpdateGroupMutation();
+    const [updateUser, { isLoading: isUserUpdating, isSuccess: isUserUpdateSuccess, isError: isUserUpdateError }] =
+        api.useUpdateUserMutation();
+    const [logout] = api.useLogoutMutation();
 
     const [canUpdateUser, setCanUpdateUser] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -63,82 +66,83 @@ export function ProfileSidebar(props: ProfileSidebar) {
         setCanUpdateUser(isDirty && isValid);
     }, [isDirty, isValid]);
 
-    //Show Toast message when User updated
-    // useEffect(() => {
-    //     if (!toastRef || (!isGroupUpdateSuccess && !isGroupUpdateError)) {
-    //         return;
-    //     }
-    //     toastRef.current?.show({
-    //         severity: isGroupUpdateSuccess ? "success" : "error",
-    //         summary: isGroupUpdateSuccess ? "SETTINGS SAVED" : "SETTINGS NOT SAVED",
-    //         detail: isGroupUpdateSuccess ? "Settings have been saved successfully" : "Failed to save settings"
-    //     });
-    // }, [toastRef, isGroupUpdateSuccess, isGroupUpdateError]);
+    // Show Toast message when User updated
+    useEffect(() => {
+        if (!toastRef || (!isUserUpdateSuccess && !isUserUpdateError)) {
+            return;
+        }
+        toastRef.current?.show({
+            severity: isUserUpdateSuccess ? "success" : "error",
+            summary: isUserUpdateSuccess ? "PROFILE SAVED" : "PROFILE NOT SAVED",
+            detail: isUserUpdateSuccess ? "Profile has been saved successfully" : "Failed to save profile"
+        });
+    }, [toastRef, isUserUpdateSuccess, isUserUpdateError]);
 
-    // const calendarButtonTemplate = (item: MenuItem, options: MenuItemOptions) => {
-    //     return (
-    //         <a className={classNames(options.className)} target={item.target} href={item.url}>
-    //             <span className={classNames(options.iconClassName, item.className, item.icon)}></span>
-    //             <span className={classNames(options.labelClassName, item.className)}>{item.label}</span>
-    //         </a>
-    //     );
-    // };
-    // const calendarMenuModel: MenuItem[] = [
-    //     {
-    //         label: "Add to Apple",
-    //         icon: "pi pi-apple",
-    //         url: group?.calendar_apple,
-    //         target: "_blank",
-    //         className: "text-0",
-    //         template: calendarButtonTemplate
-    //     },
-    //     {
-    //         label: "Add to Google",
-    //         icon: "pi pi-google",
-    //         url: group?.calendar_google,
-    //         target: "_blank",
-    //         className: "text-blue-800",
-    //         template: calendarButtonTemplate
-    //     }
-    // ];
+    const userMenuModel: MenuItem[] = [
+        {
+            label: "Send message",
+            icon: "pi pi-telegram",
+            url: user?.link,
+            target: "_blank",
+            className: "p-button-info",
+            template: SpeedDialAction
+        },
+        {
+            label: "Log out",
+            icon: "pi pi-sign-out",
+            className: "p-button-danger",
+            disabled: user?.readonly,
+            template: user?.readonly ? <div></div> : SpeedDialAction,
+            command: async () => {
+                try {
+                    await logout().unwrap();
+                    history.push("/login");
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+        }
+    ];
 
     return (
         <FormProvider {...profileForm}>
             <Sidebar
                 {...props}
-                // icons={() => (
-                //     <React.Fragment>
-                //         <Menu model={calendarMenuModel} popup ref={menuRef} />
-                //         <Button
-                //             label="Add to calendar"
-                //             icon="pi pi-calendar-plus"
-                //             className="p-button-link mr-5"
-                //             onClick={(e) => menuRef?.current?.toggle(e)}
-                //             loading={isGroupUpdating}
-                //         />
-                //         <Button
-                //             className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
-                //                 fadeoutup: !canUpdateGroup,
-                //                 "opacity-0": !canUpdateGroup,
-                //                 fadeinup: canUpdateGroup,
-                //                 "opacity-1": canUpdateGroup
-                //             })}
-                //             icon="pi pi-check"
-                //             disabled={!canUpdateGroup}
-                //             onClick={() => {
-                //                 updateGroup(settingsForm.getValues());
-                //             }}
-                //             loading={isGroupUpdating}
-                //         />
-                //     </React.Fragment>
-                // )}
+                icons={() => (
+                    <React.Fragment>
+                        <Tooltip target=".user-menu .p-speeddial-action" position="bottom" />
+                        <SpeedDial
+                            direction="right"
+                            showIcon="pi pi-bars"
+                            hideIcon="pi pi-times"
+                            className="user-menu relative mr-auto"
+                            buttonClassName="p-button-text"
+                            model={userMenuModel}
+                            disabled={isUserUpdating}
+                        />
+                        <Button
+                            className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
+                                fadeoutup: !canUpdateUser,
+                                "opacity-0": !canUpdateUser,
+                                fadeinup: canUpdateUser,
+                                "opacity-1": canUpdateUser
+                            })}
+                            icon="pi pi-check"
+                            disabled={!canUpdateUser}
+                            onClick={() => {
+                                updateUser({ groupId: groupId, user: profileForm.getValues() });
+                            }}
+                            loading={isUserUpdating}
+                        />
+                    </React.Fragment>
+                )}
                 onHide={() => {
                     profileForm.reset(user);
                     history.push(history.location.pathname.replace(/\/profile\/\d+$/, ""));
                 }}
                 visible={showProfile}
             >
-                {/* <SettingsContent group={group!} disabled={isGroupUpdating} /> */}
+                {isUserFetching ? <Loading /> : <ProfileContent user={user!} disabled={isUserUpdating} />}
                 <Toast ref={toastRef} />
             </Sidebar>
         </FormProvider>

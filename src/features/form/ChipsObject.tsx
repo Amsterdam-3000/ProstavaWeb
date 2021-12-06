@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import classNames from "classnames";
 
 import { useController, useFormContext } from "react-hook-form";
-import { BaseObject } from "../../app/services/prostava";
+import { BaseObject } from "../../app/services/base";
 
 import { Chips, ChipsProps } from "primereact/chips";
 import { OverlayPanel } from "primereact/overlaypanel";
@@ -22,7 +22,7 @@ export function ChipsObject(props: ChipsObjectProps) {
         name: props.name
     });
 
-    const [inputString, setInputString] = useState<string>();
+    const [inputString, setInputString] = useState<string>("");
 
     useEffect(() => {
         const inputElement = inputTextRef?.current;
