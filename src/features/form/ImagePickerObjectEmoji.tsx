@@ -46,25 +46,23 @@ export function ImagePickerObjectEmoji(props: ImagePickerObjectEmojiProps) {
 
     return (
         <div className={classNames(props.className)}>
-            <span className="p-image-preview-containr">
-                <Avatar
-                    image={getValues().photo}
-                    imageAlt={getValues().name}
-                    imageHasBackground
-                    shape="circle"
-                    size="xlarge"
-                    disabled={props.disabled}
-                    onClick={
-                        !props.readOnly && !props.disabled
-                            ? (e) => {
-                                  overlayPanelRef.current?.toggle(e, null);
-                              }
-                            : undefined
-                    }
-                    edit
-                    loading={isEmojiPhotoFetching}
-                />
-            </span>
+            <Avatar
+                image={getValues().photo}
+                imageAlt={getValues().name}
+                imageHasBackground
+                shape="circle"
+                size="xlarge"
+                disabled={props.disabled}
+                onClick={
+                    !props.readOnly && !props.disabled
+                        ? (e) => {
+                              overlayPanelRef.current?.toggle(e, null);
+                          }
+                        : undefined
+                }
+                edit={!props.readOnly}
+                loading={isEmojiPhotoFetching}
+            />
             <EmojiPickerPanel
                 overlayPanelRef={overlayPanelRef}
                 title={getValues().name}

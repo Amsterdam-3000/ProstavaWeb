@@ -14,12 +14,10 @@ export function InputSlider(props: InputSliderProps) {
             <InputNumber
                 className="input-slider"
                 {...inputNumberProps}
-                inputClassName={classNames({ "border-round": props.readOnly, "p-disabled": props.readOnly })}
+                inputClassName={classNames({ "border-round": props.readOnly, "opacity-100": props.readOnly })}
                 disabled={props.disabled || props.readOnly}
             />
-            {props.readOnly ? null : (
-                <Slider className="input-slider" {...sliderProps} />
-            )}
+            {props.readOnly ? null : <Slider className="input-slider" {...sliderProps} />}
         </React.Fragment>
     );
 }
