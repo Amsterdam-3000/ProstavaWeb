@@ -33,6 +33,7 @@
 
 .p-avatar {
     width: 2.25rem;
+    min-width: 2.25rem;
     height: 2.25rem;
     &.p-avatar-image.p-avatar-image-background {
         background-color: var(--surface-a);
@@ -40,6 +41,7 @@
     }
     &.p-avatar-sm {
         width: 1.625rem;
+        min-width: 1.625rem;
         height: 1.625rem;
         &.p-avatar-image.p-avatar-image-background {
             padding: 0.25rem;
@@ -47,6 +49,7 @@
     }
     &.p-avatar-lg {
         width: 3.25rem;
+        min-width: 3.25rem;
         height: 3.25rem;
         &.p-avatar-image.p-avatar-image-background {
             padding: 0.5rem;
@@ -54,6 +57,7 @@
     }
     &.p-avatar-xl {
         width: 4.5rem;
+        min-width: 4.5rem;
         height: 4.5rem;
         &.p-avatar-image.p-avatar-image-background {
             padding: 0.75rem;

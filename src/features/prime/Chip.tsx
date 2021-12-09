@@ -34,7 +34,7 @@ export function Chip(props: ChipProps) {
                             image={props.image}
                             imageAlt={props.imageAlt}
                             imageClassName={props.imageClassName}
-                            className={classNames(props.avatarClassName, "-ml-2 mr-2 min-w-max")}
+                            className={classNames(props.avatarClassName, "-ml-2 mr-2")}
                             shape={props.shape ? props.shape : "circle"}
                             icon={props.icon && classNames(props.icon, "p-chip-icon")}
                             imageHasBackground={props.imageHasBackground}
