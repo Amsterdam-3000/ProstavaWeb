@@ -1,7 +1,6 @@
 import React from "react";
 import classNames from "classnames";
-
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/store";
 import { selectStorageLanguage } from "../app/appSlice";
 
 export interface DateTextProps {
@@ -10,7 +9,7 @@ export interface DateTextProps {
     className?: string;
 }
 export function DateText(props: DateTextProps) {
-    const language = useSelector(selectStorageLanguage);
+    const language = useAppSelector(selectStorageLanguage);
     return (
         <span className={classNames(props.className)}>
             {new Date(props.date).toLocaleString(language, {
@@ -28,7 +27,7 @@ export interface TimeTextProps {
     className?: string;
 }
 export function TimeText(props: TimeTextProps) {
-    const language = useSelector(selectStorageLanguage);
+    const language = useAppSelector(selectStorageLanguage);
     return (
         <span className={classNames(props.className)}>
             {new Date(props.time).toLocaleTimeString(language, {

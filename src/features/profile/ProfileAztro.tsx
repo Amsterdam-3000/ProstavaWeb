@@ -1,25 +1,26 @@
 import React, { useEffect } from "react";
-
-import { useSelector } from "react-redux";
+import { localeOption } from "primereact/api";
 import { useFormContext } from "react-hook-form";
+import { useAppSelector } from "../../hooks/store";
 import { api, User } from "../../app/services";
 import { selectStorageLanguage } from "../app/appSlice";
 
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
 import { Avatar } from "../prime/Avatar";
-import { InputText } from "../prime/InputText";
 
 interface ProfileAztroProps {
     birthday?: Date;
 }
 
 export function ProfileAztro(props: ProfileAztroProps) {
-    const language = useSelector(selectStorageLanguage);
+    const language = useAppSelector(selectStorageLanguage);
 
     const [fetchAztro, { data: aztro, isFetching: isAztroFetching }] = api.useLazyGetAztroQuery();
 
     const { watch } = useFormContext<User>();
+
+    const t = localeOption("aztro");
 
     useEffect(() => {
         fetchAztro({ language: language, birthday: props.birthday! }, true);
@@ -61,29 +62,19 @@ export function ProfileAztro(props: ProfileAztroProps) {
                             <Skeleton height="10.5rem" />
                         ) : (
                             <React.Fragment>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.compatibility}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none mb-2 w-full"
-                                    />
-                                    <label className="left-0 m-0">Compatibility</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0">{t["compatibility"]}</label>
+                                    <span className="capitalize">{aztro?.compatibility}</span>
                                 </div>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.mood}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none mb-2 w-full"
-                                    />
-                                    <label className="left-0 m-0">Mood</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0">{t["mood"]}</label>
+                                    <span className="capitalize">{aztro?.mood}</span>
                                 </div>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.color}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none mb-2 w-full"
-                                    />
-                                    <label className="left-0 m-0">Color</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0" htmlFor="">
+                                        {t["color"]}
+                                    </label>
+                                    <span className="capitalize">{aztro?.color}</span>
                                 </div>
                             </React.Fragment>
                         )}
@@ -93,29 +84,17 @@ export function ProfileAztro(props: ProfileAztroProps) {
                             <Skeleton height="10.5rem" />
                         ) : (
                             <React.Fragment>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.lucky_number}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none mb-2 w-full"
-                                    />
-                                    <label className="left-0 m-0">Lucky number</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0">{t["luckyNumber"]}</label>
+                                    <span className="capitalize">{aztro?.lucky_number}</span>
                                 </div>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.lucky_time}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none mb-2 w-full"
-                                    />
-                                    <label className="left-0 m-0">Lucky time</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0">{t["luckyTime"]}</label>
+                                    <span className="capitalize">{aztro?.lucky_time}</span>
                                 </div>
-                                <div className="field p-float-label">
-                                    <InputText
-                                        value={aztro?.stone}
-                                        readOnly
-                                        className="p-inputtext p-0 border-none  w-full"
-                                    />
-                                    <label className="left-0 m-0">Stone</label>
+                                <div className="field flex flex-column">
+                                    <label className="text-xs text-secondary m-0">{t["stone"]}</label>
+                                    <span className="capitalize">{aztro?.stone}</span>
                                 </div>
                             </React.Fragment>
                         )}

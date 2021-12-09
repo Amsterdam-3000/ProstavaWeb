@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import classNames from "classnames";
-
 import { useForm, FormProvider, useFormState } from "react-hook-form";
 import { useHistory } from "react-router";
+import { useAppDispatch } from "../../hooks/store";
 import { useParamGroupId } from "../../hooks/group";
 import { api } from "../../app/services";
+import { setLanguage } from "../app/appSlice";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
 import { Button } from "primereact/button";
@@ -15,11 +16,13 @@ import { SpeedDial } from "primereact/speeddial";
 import { Loading } from "../pages/Loading";
 import { SpeedDialAction } from "../prime/SpeedDialAction";
 import { SettingsContent } from "./SettingsContent";
+import { localeOption } from "primereact/api";
 
 interface SettingsSidebarProps extends Omit<SidebarProps, "onHide"> {}
 
 export function SettingsSidebar(props: SettingsSidebarProps) {
     const history = useHistory();
+    const dispatch = useAppDispatch();
     const groupId = useParamGroupId();
     const toastRef = useRef<Toast>(null);
 
@@ -31,12 +34,14 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
     const [showSettings, setShowSettings] = useState(false);
 
     const settingsForm = useForm({
-        defaultValues: useMemo(() => { 
+        defaultValues: useMemo(() => {
             return group;
         }, [group]),
         mode: "onChange"
     });
     const { isDirty, isValid } = useFormState({ control: settingsForm.control });
+
+    const t = localeOption("group");
 
     //Show Settings
     useEffect(() => {
@@ -67,14 +72,18 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
         }
         toastRef.current?.show({
             severity: isGroupUpdateSuccess ? "success" : "error",
-            summary: isGroupUpdateSuccess ? "SETTINGS SAVED" : "SETTINGS NOT SAVED",
-            detail: isGroupUpdateSuccess ? "Settings have been saved successfully" : "Failed to save settings"
+            summary: isGroupUpdateSuccess
+                ? localeOption("group")["settingsSaved"]
+                : localeOption("group")["settingsNotSaved"],
+            detail: isGroupUpdateSuccess
+                ? localeOption("group")["settingsSuccess"]
+                : localeOption("group")["settingsFail"]
         });
     }, [toastRef, isGroupUpdateSuccess, isGroupUpdateError]);
 
     const groupMenuModel: MenuItem[] = [
         {
-            label: "Add to Apple",
+            label: t["addApple"],
             icon: "pi pi-apple",
             url: group?.calendar_apple,
             target: "_blank",
@@ -82,7 +91,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
             template: SpeedDialAction
         },
         {
-            label: "Add to Google",
+            label: t["addGoogle"],
             icon: "pi pi-google",
             url: group?.calendar_google,
             target: "_blank",
@@ -98,7 +107,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                 icons={() => (
                     <React.Fragment>
                         <Tooltip target=".group-menu .p-speeddial-action" position="bottom" />
-                        <Tooltip target=".p-speeddial-linear" content="Add to calendar" />
+                        <Tooltip target=".p-speeddial-linear" content={t["addCalendar"]} />
                         <SpeedDial
                             direction="right"
                             showIcon="pi pi-calendar-plus"
@@ -127,6 +136,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                 visible={showSettings}
                 onHide={() => {
                     settingsForm.reset(group);
+                    dispatch(setLanguage(group!.language));
                     history.push(history.location.pathname.replace(/\/settings$/, ""));
                 }}
             >

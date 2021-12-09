@@ -10,7 +10,7 @@ export function InputText(props: InputTextProps) {
         <InputTextPrime
             {...props}
             disabled={props.disabled || props.readOnly}
-            className={classNames(props.className, { "opacity-100": props.readOnly })}
+            className={classNames(props.className, { "p-disabled": props.readOnly })}
         />
     );
 }

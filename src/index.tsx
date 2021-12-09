@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { addLocale } from "primereact/api";
 
 import { store, persistor } from "./app/store";
 import { history } from "./app/history";
 
 import "./index.scss";
+import localeRu from "./assets/locales/ru.json";
+import localeEn from "./assets/locales/en.json";
 
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -13,6 +16,9 @@ import { AppWrapper } from "./features/app/AppWrapper";
 
 // import * as serviceWorkerRegistration from "./assets/scripts/serviceWorkerRegistration";
 // import reportWebVitals from "./assets/scripts/reportWebVitals";
+
+addLocale("ru", localeRu);
+addLocale("en", localeEn);
 
 ReactDOM.render(
     <React.StrictMode>

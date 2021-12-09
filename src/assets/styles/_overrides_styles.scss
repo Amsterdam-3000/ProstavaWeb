@@ -137,6 +137,14 @@
     }
 }
 
+.p-menubar {
+    .p-menubar-button {
+        &:hover {
+            text-decoration: none;
+        }
+    }
+}
+
 .p-badge-layout {
     .p-badge {
         margin-left: $inlineSpacing;
@@ -177,12 +185,6 @@
 @include surface-class("border", "border-color", $surfaceShades);
 .text-secondary {
     color: $textSecondaryColor !important;
-}
-.transparent {
-    background-color: transparent;
-}
-.border-transparent {
-    border-color: transparent;
 }
 
 .p-datepicker-trigger {

@@ -9,10 +9,13 @@ export const userApi = groupApi.injectEndpoints({
     endpoints: (builder) => ({
         getUsers: builder.query<User[], string>({
             query: (groupId) => ({ url: `app/group/${groupId}/users` }),
-            providesTags: (result) =>
+            providesTags: (result, error, groupId) =>
                 result
-                    ? [...result.map((user) => ({ type: "Users", id: user.id } as const)), { type: "Users", id: "ALL" }]
-                    : [{ type: "Users", id: "ALL" }]
+                    ? [
+                          ...result.map((user) => ({ type: "Users", id: `${groupId}/${user.id}` } as const)),
+                          { type: "Users", id: groupId }
+                      ]
+                    : [{ type: "Users", id: groupId }]
         }),
 
         getUser: builder.query<User, { groupId: string; userId: string }>({
@@ -28,9 +31,9 @@ export const userApi = groupApi.injectEndpoints({
             }),
             invalidatesTags: (result, error, params) => [
                 { type: "User", id: `${params.groupId}/${params.user.id}` },
-                { type: "Users", id: `${params.groupId}/${params.user.id}` }
+                { type: "Users", id: `${params.groupId}/${params.user.id}` },
+                { type: "Prostavas", id: params.groupId }
             ]
-            //TODO Optimistic update to force hiding save button
         })
     })
 });

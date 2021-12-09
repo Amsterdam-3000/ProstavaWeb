@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-
-import { useSelector } from "react-redux";
-import { selectStorageGroupId } from "../app/appSlice";
+import { localeOption } from "primereact/api";
+import { useAppSelector } from "../../hooks/store";
 import { useGetRemindersQuery, Prostava } from "../../app/services";
+import { selectStorageGroupId } from "../app/appSlice";
 
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -15,14 +15,16 @@ import { ProstavaNameChip } from "./ProstavaNameChip";
 export function Reminders() {
     const [filterValue, setFilterValue] = useState<string>("");
 
-    const groupId = useSelector(selectStorageGroupId);
+    const groupId = useAppSelector(selectStorageGroupId);
 
     const { data: reminders, isFetching: isRemindersFetching } = useGetRemindersQuery(groupId!);
+
+    const t = localeOption("prostava");
 
     const headerTemplate = (
         <div className="flex justify-content-between align-items-center">
             <span className="mx-1">
-                <span className="font-bold text-lg mr-2">Reminders</span>
+                <span className="font-bold text-lg mr-2">{t["reminders"]}</span>
                 <i className="pi pi-bell p-overlay-badge font-bold text-lg">
                     <Badge value={reminders?.length} className="p-badge-sm" severity="danger" />
                 </i>
@@ -34,7 +36,6 @@ export function Reminders() {
                     onChange={(e) => {
                         setFilterValue(e.target.value);
                     }}
-                    placeholder="Name or author"
                     className="w-full"
                 />
             </span>
@@ -56,10 +57,11 @@ export function Reminders() {
                 filters={{ global: { value: filterValue, matchMode: "contains" } }}
                 globalFilterFields={["name", "author.name"]}
                 breakpoint="575px"
+                tableClassName="w-full"
                 className="p-datatable-card"
             >
                 <Column
-                    header="Name"
+                    header={t["name"]}
                     body={(prostava: Prostava) => <ProstavaNameChip prostava={prostava} />}
                     field="name"
                     sortable
@@ -67,7 +69,7 @@ export function Reminders() {
                     headerClassName="border-top-1"
                 />
                 <Column
-                    header="Author"
+                    header={t["author"]}
                     body={(prostava: Prostava) => <ProfileButton profile={prostava.author} />}
                     sortable
                     field="author.name"
@@ -75,7 +77,7 @@ export function Reminders() {
                     headerClassName="border-top-1"
                 />
                 <Column
-                    header="Expires"
+                    header={t["expires"]}
                     body={(prostava: Prostava) => <DateText date={prostava.closing_date!} />}
                     sortable
                     sortField="closing_date"

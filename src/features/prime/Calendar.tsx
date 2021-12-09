@@ -12,7 +12,7 @@ export function Calendar(props: CalendarProps) {
         <CalendarPrime
             {...props}
             disabled={props.disabled || props.readOnly}
-            inputClassName={classNames(props.inputClassName, { "opacity-100": props.readOnly })}
+            inputClassName={classNames(props.inputClassName, { "p-disabled": props.readOnly })}
             showIcon={props.readOnly ? false : props.showIcon}
         />
     );

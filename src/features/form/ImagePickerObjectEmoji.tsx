@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import classNames from "classnames";
-
 import { useController, useFormContext } from "react-hook-form";
 import { api, BaseObject } from "../../app/services";
 
@@ -54,6 +53,7 @@ export function ImagePickerObjectEmoji(props: ImagePickerObjectEmojiProps) {
                     imageHasBackground
                     shape="circle"
                     size="xlarge"
+                    disabled={props.disabled}
                     onClick={
                         !props.readOnly && !props.disabled
                             ? (e) => {

@@ -1,6 +1,6 @@
 import React from "react";
+import { localeOption } from "primereact/api";
 import classNames from "classnames";
-
 import { Prostava, ProstavaStatus } from "../../app/services";
 
 import { Card } from "primereact/card";
@@ -19,6 +19,8 @@ export interface ProstavaCardProps {
 }
 
 export function ProstavaCard(props: ProstavaCardProps) {
+    const t = localeOption("prostava");
+
     const headerTemplate = (
         <div className="flex flex-column relative">
             {props.prostava.venue.photo ? (
@@ -81,7 +83,7 @@ export function ProstavaCard(props: ProstavaCardProps) {
             footer={footerTemplate}
             className={classNames(props.className, "border-1 border-d")}
         >
-            <ProfileButton profile={props.prostava.author} className="mb-2" tooltip="Author" />
+            <ProfileButton profile={props.prostava.author} className="mb-2" />
             <ProstavaParticipantsGroup prostava={props.prostava} />
         </Card>
     );

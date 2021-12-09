@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from "react";
+import { localeOption } from "primereact/api";
 import momentTZ from "moment-timezone";
-
 import { useFormContext } from "react-hook-form";
 import { useAppDispatch } from "../../hooks/store";
 import { api, Group } from "../../app/services";
@@ -26,6 +26,8 @@ export function SettingsContent(props: SettingsContentProps) {
     const [fetchCurrencies, { data: currencies, isFetching: isCurrenciesFetching }] = api.useLazyGetCurrenciesQuery();
 
     const { watch } = useFormContext<Group>();
+
+    const t = localeOption("group");
 
     const fetchLocale = useCallback(
         (language: string) => {
@@ -58,7 +60,7 @@ export function SettingsContent(props: SettingsContentProps) {
                     disabled={props.disabled}
                     className="mr-2 align-self-center"
                 />
-                <Field label="Group name" className="w-full">
+                <Field label={t["name"]} className="w-full">
                     <InputName
                         id="group-settings-name"
                         name="name"
@@ -68,7 +70,7 @@ export function SettingsContent(props: SettingsContentProps) {
                 </Field>
             </div>
             <div className="flex flex-column p-fluid">
-                <Field label="Language">
+                <Field label={t["language"]}>
                     <DropdownObject
                         id="group-settings-language"
                         name="language"
@@ -79,7 +81,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Currency">
+                <Field label={t["currency"]}>
                     <DropdownObject
                         id="group-settings-currency"
                         name="currency"
@@ -90,7 +92,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Time Zone">
+                <Field label={t["timezone"]}>
                     <DropdownObject
                         id="group-settings-timezone"
                         name="timezone"
@@ -102,7 +104,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Prostava types">
+                <Field label={t["prostavaTypes"]}>
                     <ChipsObject
                         id="group-settings-types"
                         name="prostava_types"
@@ -110,46 +112,46 @@ export function SettingsContent(props: SettingsContentProps) {
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Days before prostava expiry">
+                <Field label={t["daysBefore"]}>
                     <InputNumberButtons
                         id="group-settings-days"
                         name="create_days_ago"
-                        prefix="Expires in "
-                        suffix=" days"
+                        prefix={`${t["expiresIn"]} `}
+                        suffix={` ${t["days"]}`}
                         min={0}
                         max={9999}
                         readOnly={props.group.readonly}
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Hours to complete prostava">
+                <Field label={t["hoursComplete"]}>
                     <InputNumberButtons
                         id="group-settings-hours"
                         name="pending_hours"
-                        prefix="Completed in "
-                        suffix=" hours"
+                        prefix={`${t["completedIn"]} `}
+                        suffix={` ${t["hours"]}`}
                         min={0}
                         max={999}
                         readOnly={props.group.readonly}
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Total number of participants">
+                <Field label={t["participantsNumber"]}>
                     <InputNumberSlider
                         id="group-settings-count"
                         name="chat_members_count"
-                        suffix={` participants out of ${props.group.chat_members_all} members`}
+                        suffix={` ${t["participantsOutOf"]} ${props.group.chat_members_all} ${t["members"]}`}
                         min={0}
                         max={props.group.chat_members_all}
                         readOnly={props.group.readonly}
                         disabled={props.disabled}
                     />
                 </Field>
-                <Field label="Minimum of participants to approve prostava">
+                <Field label={t["participantsMinimum"]}>
                     <InputNumberSlider
                         id="group-settings-percent"
                         name="participants_min_percent"
-                        suffix="% required for approval"
+                        suffix={`% ${t["approvalRequired"]}`}
                         min={0}
                         max={100}
                         readOnly={props.group.readonly}

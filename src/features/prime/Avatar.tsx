@@ -7,6 +7,7 @@ import {
     AvatarSizeType as AvatarPrimeSizeType
 } from "primereact/avatar";
 import { Tooltip } from "primereact/tooltip";
+import { TooltipPositionType } from "primereact/tooltip/tooltipoptions";
 
 export type AvatarSizeType = AvatarPrimeSizeType | "small";
 
@@ -19,6 +20,7 @@ export interface AvatarProps extends Omit<Omit<AvatarPrimeProps, "template">, "s
     edit?: boolean;
     editIcon?: string;
     tooltip?: string;
+    tooltipPosition?: TooltipPositionType;
 }
 
 let id = 0;
@@ -28,12 +30,14 @@ export function Avatar(props: AvatarProps) {
 
     return (
         <React.Fragment>
-            {props.tooltip && <Tooltip target={`.avatar-${id}`} content={props.tooltip} />}
+            {props.tooltip && (
+                <Tooltip target={`.avatar-${id}`} content={props.tooltip} position={props.tooltipPosition} />
+            )}
             <AvatarPrime
                 {...props!}
                 size={props.size === "small" ? "normal" : props.size}
                 className={classNames(`avatar-${id}`, props.className, {
-                    "opacity-100": props.disabled || props.loading,
+                    "p-disabled": props.disabled || props.loading,
                     "p-avatar-sm": props.size === "small",
                     "p-avatar-image-background": props.image && props.imageHasBackground,
                     "p-image-preview-container": props.edit && !props.disabled && !props.loading

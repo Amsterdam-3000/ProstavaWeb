@@ -10,7 +10,7 @@ export function InputNumber(props: InputNumberProps) {
         <InputNumberPrime
             {...props!}
             disabled={props.disabled || props.readOnly}
-            inputClassName={classNames(props.inputClassName, { "opacity-100": props.readOnly })}
+            inputClassName={classNames(props.inputClassName, { "p-disabled": props.readOnly })}
             showButtons={props.readOnly ? false : props.showButtons}
         />
     );

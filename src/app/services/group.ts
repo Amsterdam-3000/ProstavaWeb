@@ -43,7 +43,6 @@ export const groupApi = globalApi.injectEndpoints({
                 { type: "Group", id: group.id },
                 { type: "Groups", id: group.id }
             ]
-            //TODO Optimistic update to force hiding save button
         })
     })
 });

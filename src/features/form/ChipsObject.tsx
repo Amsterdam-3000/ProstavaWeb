@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import classNames from "classnames";
-
 import { useController, useFormContext } from "react-hook-form";
 import { BaseObject } from "../../app/services/base";
+import { localeOption } from "primereact/api";
 
 import { Chips, ChipsProps } from "primereact/chips";
 import { OverlayPanel } from "primereact/overlaypanel";
@@ -33,7 +33,10 @@ export function ChipsObject(props: ChipsObjectProps) {
             if (!inputElement.value || /^\p{L}.*$/u.test(inputElement.value)) {
                 clearErrors(field.name);
             } else {
-                setError(field.name, { type: "manual", message: "Name must start with letter" });
+                setError(field.name, {
+                    type: "manual",
+                    message: `${localeOption("form")["name"]} ${localeOption("form")["mustStartLetter"]}`
+                });
             }
         };
         inputElement.addEventListener("input", inputHandler);

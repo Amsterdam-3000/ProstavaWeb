@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import classNames from "classnames";
+import { localeOption } from "primereact/api";
 
 import {
     DataScroller as DataScrollerPrime,
@@ -26,7 +27,7 @@ export function DataScroller(props: DataScrollerProps) {
                     props.loader && props.rows && props.value && props.rows < props.value?.length ? (
                         <Button
                             icon="pi pi-plus"
-                            label="More"
+                            label={localeOption("more")}
                             onClick={() => {
                                 dataScrollerRef.current && dataScrollerRef.current.load();
                             }}

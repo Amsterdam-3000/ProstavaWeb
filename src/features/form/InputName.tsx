@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
-
 import { useController, useFormContext } from "react-hook-form";
+import { localeOption } from "primereact/api";
 
 import { InputText, InputTextProps } from "../prime/InputText";
 
@@ -14,8 +14,11 @@ export function InputName(props: InputNameProps) {
     const { field, fieldState } = useController({
         name: props.name,
         rules: {
-            required: "Name is required",
-            pattern: { value: /^\p{L}.*$/u, message: "Name must start with letter" }
+            required: `${localeOption("form")["name"]} ${localeOption("form")["isRequired"]}`,
+            pattern: {
+                value: /^\p{L}.*$/u,
+                message: `${localeOption("form")["name"]} ${localeOption("form")["mustStartLetter"]}`
+            }
         }
     });
 

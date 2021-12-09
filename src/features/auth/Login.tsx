@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-
+import PrimeReact, { localeOption } from "primereact/api";
 import { useHistory } from "react-router";
 import { useAppSelector } from "../../hooks/store";
 import { api } from "../../app/services";
@@ -15,8 +15,11 @@ import { Avatar } from "../prime/Avatar";
 
 export function Login() {
     const history = useHistory();
+
     const location = useAppSelector(selectLocation);
+
     const [login] = api.useLoginMutation();
+
     const toastRef = useRef<Toast>(null);
 
     useEffect(() => {
@@ -43,8 +46,8 @@ export function Login() {
             if (toastRef.current) {
                 toastRef.current.show({
                     severity: "error",
-                    summary: "ACCESS DENIED",
-                    detail: "You do not have the necessary permissions"
+                    summary: localeOption("auth")["accessDenied"],
+                    detail: localeOption("auth")["noPermissions"]
                 });
             }
         }
@@ -67,17 +70,17 @@ export function Login() {
                         size="large"
                     />
                     <div className="login-form flex flex-column flex-grow-1 justify-content-center">
-                        <h2>Login</h2>
+                        <h2>{localeOption("login")}</h2>
                         <p className="text-secondary mb-5 font-medium">
-                            Don't have a Telegram account?{" "}
+                            {localeOption("auth")["noTelegram?"]}{" "}
                             <a href="https://telegram.org/apps" target="_blank" rel="noreferrer">
-                                Create
+                                {localeOption("create")}
                             </a>
                         </p>
                         <TLoginButton
                             botName={process.env.REACT_APP_BOT_NAME!}
                             buttonSize={TLoginButtonSize.Large}
-                            lang="en"
+                            lang={PrimeReact.locale}
                             usePic={true}
                             cornerRadius={4}
                             onAuthCallback={loginHandler}
@@ -85,7 +88,9 @@ export function Login() {
                         />
                     </div>
                     <Button
-                        label="Add Bot to group"
+                        label={process.env.REACT_APP_BOT_NAME!}
+                        tooltip={localeOption("auth")["addBot"]}
+                        tooltipOptions={{ position: "top" }}
                         className="p-button-text p-button-info"
                         onClick={() => {
                             window.open(`https://t.me/${process.env.REACT_APP_BOT_NAME}`, "_blank");
@@ -105,18 +110,21 @@ export function Login() {
                     <div className="login-image-content flex-grow-1 flex justify-content-center flex-column">
                         <div className="login-image-text mb-5">
                             <h1>
-                                Hi! <br />
-                                I’m Prostava
+                                {localeOption("auth")["hi!"]}
+                                <br />
+                                {localeOption("auth")["iProstava"]}
                             </h1>
                             <h5>
-                                I can help you control prostavas
+                                {localeOption("auth")["helpProstava"]}
                                 <br />
                             </h5>
                         </div>
                     </div>
                     <Button
-                        label="Show on Github"
-                        className="p-button-link font-medium"
+                        label={process.env.REACT_APP_BOT_NAME!}
+                        tooltip={localeOption("auth")["showGitgub"]}
+                        tooltipOptions={{ position: "top" }}
+                        className="p-button-link"
                         icon="pi pi-github"
                         onClick={() => {
                             window.open("https://github.com/usebooz/ProstavaBot", "_blank");

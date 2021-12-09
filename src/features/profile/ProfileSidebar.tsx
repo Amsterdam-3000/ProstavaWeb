@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
+import { localeOption } from "primereact/api";
 import classNames from "classnames";
-
 import { useHistory } from "react-router";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
 import { useParamGroupId } from "../../hooks/group";
@@ -73,14 +73,16 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
         }
         toastRef.current?.show({
             severity: isUserUpdateSuccess ? "success" : "error",
-            summary: isUserUpdateSuccess ? "PROFILE SAVED" : "PROFILE NOT SAVED",
-            detail: isUserUpdateSuccess ? "Profile has been saved successfully" : "Failed to save profile"
+            summary: isUserUpdateSuccess
+                ? localeOption("user")["profileSaved"]
+                : localeOption("user")["profileNotSaved"],
+            detail: isUserUpdateSuccess ? localeOption("user")["profileSuccess"] : localeOption("user")["profileFail"]
         });
     }, [toastRef, isUserUpdateSuccess, isUserUpdateError]);
 
     const userMenuModel: MenuItem[] = [
         {
-            label: "Send message",
+            label: localeOption("sendMessage"),
             icon: "pi pi-telegram",
             url: user?.link,
             target: "_blank",
@@ -88,7 +90,7 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
             template: SpeedDialAction
         },
         {
-            label: "Log out",
+            label: localeOption("logOut"),
             icon: "pi pi-sign-out",
             className: "p-button-danger",
             disabled: user?.readonly,

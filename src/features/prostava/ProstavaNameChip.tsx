@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-
 import { Prostava } from "../../app/services";
 
 import { Chip } from "../prime/Chip";
@@ -17,7 +16,7 @@ export function ProstavaNameChip(props: ProstavaNameChipProps) {
             imageAlt={props.prostava.name}
             label={props.prostava.name}
             shape="square"
-            className={classNames("transparent", props.className)}
+            className={classNames("bg-transparent", props.className)}
         />
     );
 }
