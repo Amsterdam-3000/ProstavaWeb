@@ -1,5 +1,4 @@
 import React from "react";
-import { localeOption } from "primereact/api";
 import classNames from "classnames";
 import { Prostava, ProstavaStatus } from "../../app/services";
 
@@ -19,8 +18,6 @@ export interface ProstavaCardProps {
 }
 
 export function ProstavaCard(props: ProstavaCardProps) {
-    const t = localeOption("prostava");
-
     const headerTemplate = (
         <div className="flex flex-column relative">
             {props.prostava.venue.photo ? (
