@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-
-import { useSelector } from "react-redux";
+import { localeOption } from "primereact/api";
 import { selectStorageGroupId } from "../app/appSlice";
+import { useAppSelector } from "../../hooks/store";
 import { useGetHistoryQuery, Prostava } from "../../app/services";
 
 import { DataView, DataViewLayoutOptions, DataViewLayoutType } from "primereact/dataview";
 import { DataTable } from "primereact/datatable";
-import { Column, ColumnFilterElementTemplateOptions } from "primereact/column";
+import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { MultiSelect } from "primereact/multiselect";
 import { Rating } from "primereact/rating";
@@ -27,9 +27,11 @@ export function History() {
     const [filterValue, setFilterValue] = useState<string>("");
     const [layoutView, setLayoutView] = useState<DataViewLayoutType>("grid");
 
-    const groupId = useSelector(selectStorageGroupId);
+    const groupId = useAppSelector(selectStorageGroupId);
 
     const { data: prostavas, isFetching: isProstavasFetching } = useGetHistoryQuery(groupId!);
+
+    const t = localeOption("prostava");
 
     const statuses = Array.from(
         prostavas?.reduce((statuses, prostava) => {
@@ -38,17 +40,14 @@ export function History() {
         }, new Set()) || []
     );
 
-    let venueIds = new Set();
-    const venues = prostavas
-        ?.filter((prostava) => {
-            if (!prostava.venue.name || venueIds.has(prostava.venue.name)) {
-                return false;
-            } else {
-                venueIds.add(prostava.venue.name);
-                return true;
+    const venues = Array.from(
+        prostavas?.reduce((venues, prostava) => {
+            if (prostava.venue.name) {
+                venues.add(prostava.venue.name);
             }
-        })
-        .map((prostava) => prostava.venue);
+            return venues;
+        }, new Set()) || []
+    );
 
     let authorIds = new Set();
     const authors = prostavas
@@ -72,14 +71,15 @@ export function History() {
                     }}
                 />
             </span>
-            <span className="p-input-icon-right">
+            <span className="p-input-icon-right w-8 sm:w-7 md:w-6 lg:w-5 xl:w-4">
                 <i className="pi pi-search" />
                 <InputText
                     value={filterValue}
                     onChange={(e) => {
                         setFilterValue(e.target.value);
                     }}
-                    placeholder="Name or author"
+                    placeholder={localeOption("keywordSearch")}
+                    className="w-full"
                 />
             </span>
         </div>
@@ -126,29 +126,30 @@ export function History() {
                 status: { value: null, matchMode: "in" },
                 date: { operator: "and", constraints: [{ value: null, matchMode: "dateIs" }] },
                 amount: { operator: "and", constraints: [{ value: null, matchMode: "equals" }] },
-                venue: { value: null, matchMode: "in" },
+                "venue.name": { value: null, matchMode: "in" },
                 author: { value: null, matchMode: "in" },
                 rating: { operator: "and", constraints: [{ value: null, matchMode: "equals" }] }
             }}
             globalFilterFields={["name", "author.name"]}
             breakpoint="900px"
+            tableClassName="w-full"
             className="p-2"
         >
             <Column
-                header="Name"
+                header={t["name"]}
                 body={(prostava: Prostava) => <ProstavaNameChip prostava={prostava} />}
                 field="name"
                 sortable
                 sortField="name"
                 filter
                 filterField="name"
-                filterPlaceholder="Search by name"
+                filterPlaceholder={t["nameSearch"]}
                 showFilterMenuOptions={false}
                 showApplyButton={false}
                 showClearButton={false}
             />
             <Column
-                header="Status"
+                header={t["status"]}
                 body={(prostava: Prostava) => <ProstavaStatusTag status={prostava.status} />}
                 field="status"
                 sortable
@@ -167,13 +168,13 @@ export function History() {
                         onChange={(e) => {
                             options.filterApplyCallback(e.value);
                         }}
-                        placeholder="Search by status"
+                        placeholder={t["statusSearch"]}
                         maxSelectedLabels={1}
                     />
                 )}
             />
             <Column
-                header="Date"
+                header={t["date"]}
                 body={(prostava: Prostava) => <DateText date={prostava.date} />}
                 field="date"
                 sortable
@@ -196,7 +197,7 @@ export function History() {
                 dataType="date"
             />
             <Column
-                header="Cost"
+                header={t["cost"]}
                 body={(prostava: Prostava) => <CostText amount={prostava.amount!} currency={prostava.currency!} />}
                 field="amount"
                 sortable
@@ -214,19 +215,19 @@ export function History() {
                             options.filterApplyCallback(e.value);
                         }}
                         useGrouping
-                        placeholder="Search by cost"
+                        placeholder={t["costSearch"]}
                     />
                 )}
                 dataType="numeric"
             />
             <Column
-                header="Venue"
+                header={t["venue"]}
                 body={(prostava: Prostava) => <VenueLink venue={prostava.venue} />}
                 field="venue.name"
                 sortable
                 sortField="venue.name"
                 filter
-                filterField="venue"
+                filterField="venue.name"
                 showFilterMenuOptions={false}
                 showApplyButton={false}
                 showClearButton={false}
@@ -237,14 +238,13 @@ export function History() {
                         onChange={(e) => {
                             options.filterApplyCallback(e.value);
                         }}
-                        placeholder="Search by venue"
-                        optionLabel="name"
+                        placeholder={t["venueSearch"]}
                         maxSelectedLabels={1}
                     />
                 )}
             />
             <Column
-                header="Author"
+                header={t["author"]}
                 body={(prostava: Prostava) => <ProfileButton profile={prostava.author} />}
                 field="author.name"
                 sortable
@@ -263,18 +263,18 @@ export function History() {
                         onChange={(e) => {
                             options.filterApplyCallback(e.value);
                         }}
-                        placeholder="Search by author"
+                        placeholder={t["authorSearch"]}
                         maxSelectedLabels={1}
                     />
                 )}
             />
             <Column
-                header="Participants"
+                header={t["participants"]}
                 body={(prostava: Prostava) => <ProstavaParticipantsGroup prostava={prostava} />}
                 field="participants"
             />
             <Column
-                header="Rating"
+                header={t["rating"]}
                 body={(prostava: Prostava) => <ProstavaRating rating={prostava.rating} readOnly />}
                 field="rating"
                 sortable

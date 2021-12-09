@@ -1,5 +1,5 @@
 import React from "react";
-
+import { localeOption } from "primereact/api";
 import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/group";
 import { useUser } from "../../hooks/user";
@@ -42,7 +42,7 @@ export function AppTopbar() {
             <Button
                 icon="pi pi-cog"
                 className="p-button-outlined"
-                tooltip="Settings"
+                tooltip={localeOption("settings")}
                 tooltipOptions={{ position: "bottom" }}
                 onClick={(e) => {
                     history.push(`${history.location.pathname}/settings`);
@@ -58,19 +58,20 @@ export function AppTopbar() {
             className="border-primary"
             disabled={isUserChanging}
             loading={isUserChanging}
+            tooltip={localeOption("profile")}
         />
     );
 
     const menuItems: MenuItem[] = [
         {
-            label: "Home",
+            label: localeOption("home"),
             icon: "pi pi-home",
             command: () => {
                 history.push(`/app/${groupId}`);
             }
         },
         {
-            label: "History",
+            label: localeOption("history"),
             icon: "pi pi-history",
             command: () => {
                 history.push(`/app/${groupId}/history`);

@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useController } from "react-hook-form";
 
 import { InputNumber, InputNumberProps } from "../prime/InputNumber";

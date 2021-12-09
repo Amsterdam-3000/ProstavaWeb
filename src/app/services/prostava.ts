@@ -42,13 +42,13 @@ export const prostavaApi = userApi.injectEndpoints({
     endpoints: (builder) => ({
         getProstavas: builder.query<Prostava[], string>({
             query: (groupId) => ({ url: `app/group/${groupId}/prostavas` }),
-            providesTags: (result) =>
+            providesTags: (result, error, groupId) =>
                 result
                     ? [
                           ...result.map((prostava) => ({ type: "Prostavas", id: prostava.id } as const)),
-                          { type: "Prostavas", id: "ALL" }
+                          { type: "Prostavas", id: groupId }
                       ]
-                    : [{ type: "Prostavas", id: "ALL" }]
+                    : [{ type: "Prostavas", id: groupId }]
         })
     })
 });

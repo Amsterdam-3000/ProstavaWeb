@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import classNames from "classnames";
+import { localeOption } from "primereact/api";
 
 import { OverlayPanel, OverlayPanelProps } from "primereact/overlaypanel";
 import { BaseEmoji, Picker, PickerProps } from "emoji-mart";
@@ -24,6 +25,7 @@ export function EmojiPickerPanel(props: EmojiPickerPanelProps) {
                 onSelect={(emoji: BaseEmoji) => {
                     props.onSelect(emoji.native);
                 }}
+                i18n={localeOption("emoji")}
             />
         </OverlayPanel>
     );
@@ -31,7 +33,7 @@ export function EmojiPickerPanel(props: EmojiPickerPanelProps) {
 
 function EmojiPicker(props: PickerProps) {
     const divRef = useRef<HTMLDivElement>(null);
-    //TODO Fix error when click panel ontent
+    //TODO Fix error when click panel content
     useEffect(() => {}, [divRef]);
     return (
         <div ref={divRef}>

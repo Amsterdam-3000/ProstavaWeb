@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-
+import { localeOption } from "primereact/api";
 import { Route, Switch, useHistory } from "react-router";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../hooks/store";
 import { useAppDispatch } from "../../hooks/store";
 import { useParamGroupId } from "../../hooks/group";
 import { useParamUserId, useUser } from "../../hooks/user";
@@ -28,7 +28,7 @@ export function App() {
         isLoading: isGroupsLoading,
         isError: isGroupsError
     } = api.useGetGroupsQuery();
-    const storageGroupId = useSelector(selectStorageGroupId);
+    const storageGroupId = useAppSelector(selectStorageGroupId);
     const paramGroupId = useParamGroupId();
     const paramUserId = useParamUserId();
     const {
@@ -41,9 +41,13 @@ export function App() {
         skip: !paramGroupId
     });
     const user = useUser();
-    const { data: groupUser, isLoading: isUserLoading } = api.useGetUserQuery(
+    const { data: groupUser, isLoading: isGroupUserLoading } = api.useGetUserQuery(
         { groupId: paramGroupId, userId: user!.id },
         { skip: !(paramGroupId && user?.id) }
+    );
+    const { isError: isParamUserError } = api.useGetUserQuery(
+        { groupId: paramGroupId, userId: paramUserId },
+        { skip: !(paramGroupId && paramUserId) }
     );
 
     //Delete '/' from end of the url
@@ -59,7 +63,12 @@ export function App() {
             return;
         }
         if (!groups?.length) {
-            history.push("/login", { error: { name: "ERROR", message: "You do not have Groups with Bot" } });
+            history.push("/login", {
+                error: {
+                    name: localeOption("app")["error"],
+                    message: localeOption("app")["noGroups"]
+                }
+            });
         }
     }, [isGroupsSuccess, groups, history]);
 
@@ -100,15 +109,32 @@ export function App() {
         history.replace(`${history.location.pathname}/${groupUser.id}`);
     }, [paramUserId, groupUser, history, history.location]);
 
-    if (isGroupsLoading || isGroupLoading || isUserLoading) {
+    if (isGroupsLoading || isGroupLoading || isGroupUserLoading) {
         return <Loading background />;
     }
     if (isGroupsError) {
         console.log(groupsError);
-        return <Exception title="ERROR" detail="Something went wrong" />;
+        return (
+            <Exception title={localeOption("app")["error"]} detail={localeOption("app")["goWrong"]} severity="error" />
+        );
     }
     if (isGroupError) {
-        return <Exception title="GROUP NOT FOUND" detail="Requested group does not exist" />;
+        return (
+            <Exception
+                title={localeOption("app")["noGroup"]}
+                detail={localeOption("app")["noGropExists"]}
+                severity="info"
+            />
+        );
+    }
+    if (isParamUserError) {
+        return (
+            <Exception
+                title={localeOption("app")["noUser"]}
+                detail={localeOption("app")["noUserExists"]}
+                severity="info"
+            />
+        );
     }
 
     return (
@@ -117,7 +143,7 @@ export function App() {
                 <AppTopbar />
                 <div className="layout-content flex-auto mt-header">
                     <BlockUI
-                        className="min-h-content"
+                        className="min-h-content z-0"
                         blocked={isGroupFetching}
                         template={<i className="pi pi-spin pi-spinner text-4xl" />}
                     >

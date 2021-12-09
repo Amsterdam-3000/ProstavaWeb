@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-
-import { useSelector } from "react-redux";
-import { selectStorageGroupId, selectStorageLanguage } from "../app/appSlice";
+import { localeOption } from "primereact/api";
+import { useAppSelector } from "../../hooks/store";
 import { api, User } from "../../app/services";
+import { selectStorageGroupId, selectStorageLanguage } from "../app/appSlice";
 
 import { Badge } from "primereact/badge";
 import { DataTable } from "primereact/datatable";
@@ -13,14 +13,16 @@ import { ProfileButton } from "./ProfileButton";
 export function Profiles() {
     const [filterValue, setFilterValue] = useState<string>("");
 
-    const groupId = useSelector(selectStorageGroupId);
-    const language = useSelector(selectStorageLanguage);
+    const groupId = useAppSelector(selectStorageGroupId);
+    const language = useAppSelector(selectStorageLanguage);
     const { data: users, isFetching: isUsersFetching } = api.useGetUsersQuery(groupId!, { skip: !groupId });
+
+    const t = localeOption("user");
 
     const headerTemplate = (
         <div className="flex justify-content-between align-items-center">
             <span className="mx-1">
-                <span className="font-bold text-lg mr-2">Members</span>
+                <span className="font-bold text-lg mr-2">{t["members"]}</span>
                 <i className="pi pi-users p-overlay-badge font-bold text-lg">
                     <Badge value={users?.length} className="p-badge-sm" />
                 </i>
@@ -32,7 +34,6 @@ export function Profiles() {
                     onChange={(e) => {
                         setFilterValue(e.target.value);
                     }}
-                    placeholder="Name"
                     className="w-full"
                 />
             </span>
@@ -61,17 +62,18 @@ export function Profiles() {
                 responsiveLayout="scroll"
                 paginator
                 alwaysShowPaginator={false}
+                tableClassName="w-full"
                 className="p-datatable-card"
             >
                 <Column
-                    header="Name"
+                    header={t["name"]}
                     body={(user: User) => <ProfileButton profile={user} />}
                     sortable
                     sortField="name"
                     headerClassName="border-top-1"
                 />
                 <Column
-                    header="Birthday"
+                    header={t["birthday"]}
                     body={birthdayTemplate}
                     sortable
                     sortField="birthday"

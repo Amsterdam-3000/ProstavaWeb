@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-
 import { useHistory } from "react-router";
 import { Prostava } from "../../app/services";
 
@@ -25,7 +24,8 @@ export function ProstavaParticipantsGroup(props: ProstavaParticipantsGroupProps)
                         image={participant.user.photo}
                         imageAlt={participant.user.name}
                         imageHasBackground
-                        tooltip={`${participant.user.name}: ${participant.rating.toString()}`}
+                        tooltip={`${participant.user.name}: ${participant.rating.toFixed(0)}`}
+                        tooltipPosition="bottom"
                         onClick={(e) => {
                             history.push(`${history.location.pathname}/profile/${participant.user.id}`);
                         }}
