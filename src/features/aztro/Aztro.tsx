@@ -8,12 +8,15 @@ import { selectStorageLanguage } from "../app/appSlice";
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
 import { Avatar } from "../prime/Avatar";
+import { Stars } from "./Stars";
+import { Roman } from "./Roman";
 
-interface ProfileAztroProps {
+interface AztroProps {
     birthday?: Date;
+    isRoman?: boolean;
 }
 
-export function ProfileAztro(props: ProfileAztroProps) {
+export function Aztro(props: AztroProps) {
     const language = useAppSelector(selectStorageLanguage);
 
     const [fetchAztro, { data: aztro, isFetching: isAztroFetching }] = api.useLazyGetAztroQuery();
@@ -39,11 +42,11 @@ export function ProfileAztro(props: ProfileAztroProps) {
         <Card
             header={
                 <React.Fragment>
-                    <div className="parallax-stars h-10rem mb-2 border-round-top">
-                        <div className="stars"></div>
-                        <div className="stars2"></div>
-                        <div className="stars3"></div>
-                    </div>
+                    {props.isRoman ? (
+                        <Roman className="h-10rem mb-2 border-round-top" />
+                    ) : (
+                        <Stars className="h-10rem mb-2 border-round-top" />
+                    )}
                     <div className="w-full flex justify-content-center -mt-6">
                         {isAztroFetching ? (
                             <Skeleton width="5rem" height="5rem" borderRadius="10px" className="z-1" />

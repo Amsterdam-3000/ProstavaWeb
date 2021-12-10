@@ -6,7 +6,7 @@ import { Field } from "../form/Field";
 import { InputName } from "../form/InputName";
 import { ImagePickerObjectEmoji } from "../form/ImagePickerObjectEmoji";
 import { CalendarDateButton } from "../form/CalendarDateButton";
-import { ProfileAztro } from "./ProfileAztro";
+import { Aztro } from "../aztro/Aztro";
 
 interface ProfileContentProps {
     user: User;
@@ -44,7 +44,7 @@ export function ProfileContent(props: ProfileContentProps) {
                     />
                 </Field>
             </div>
-            <ProfileAztro birthday={props.user.birthday} />
+            <Aztro birthday={props.user.birthday} isRoman={new RegExp(/roman/, "i").test(props.user.name)} />
         </React.Fragment>
     );
 }
