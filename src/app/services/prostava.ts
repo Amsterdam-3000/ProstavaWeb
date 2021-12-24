@@ -49,16 +49,70 @@ export const prostavaApi = userApi.injectEndpoints({
                           { type: "Prostavas", id: groupId }
                       ]
                     : [{ type: "Prostavas", id: groupId }]
+        }),
+
+        getProstava: builder.query<Prostava, { groupId: string; prostavaId?: string; isRequest?: boolean }>({
+            query: (params) => ({
+                url:
+                    `app/group/${params.groupId}/prostava` +
+                    ((params.prostavaId && `/${params.prostavaId}`) || "") +
+                    ((params.isRequest && "?isRequest=true") || "")
+            }),
+            providesTags: (prostava, error, params) => [{ type: "Prostavas", id: params.prostavaId || prostava?.id }]
+        }),
+
+        announceProstava: builder.mutation<void, { groupId: string; prostavaId: string; prostava: Prostava }>({
+            query: ({ groupId, prostavaId, prostava }) => ({
+                url: `app/group/${groupId}/prostava/${prostava.id}/announce`,
+                method: "PUT",
+                body: prostava
+            }),
+            invalidatesTags: (result, error, { groupId, prostavaId }) => [
+                { type: "Prostavas", id: prostavaId || groupId }
+            ]
         })
     })
 });
+
+export const useGetUserNewRequiredProstavas = (groupId?: string, userId?: string) =>
+    prostavaApi.useGetProstavasQuery(groupId!, {
+        skip: !groupId || !userId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.filter(
+                (prostava) =>
+                    prostava.status === ProstavaStatus.New &&
+                    !prostava.is_request &&
+                    prostava.author.id === userId &&
+                    prostava.creator.id !== userId
+            )
+        })
+    });
+export const useGetUserNewProstava = (groupId?: string, userId?: string, isRequest?: boolean, skip?: boolean) =>
+    prostavaApi.useGetProstavasQuery(groupId!, {
+        skip: skip || !groupId || !userId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.find(
+                (prostava) =>
+                    prostava.status === ProstavaStatus.New &&
+                    prostava.is_request === isRequest &&
+                    prostava.creator.id === userId
+            )
+        })
+    });
 
 export const useGetRemindersQuery = (groupId: string) =>
     prostavaApi.useGetProstavasQuery(groupId, {
         skip: !groupId,
         selectFromResult: (result) => ({
             ...result,
-            data: result.data?.filter((prostava) => prostava.status === ProstavaStatus.New)
+            data: result.data?.filter(
+                (prostava) =>
+                    !prostava.is_request &&
+                    prostava.status === ProstavaStatus.New &&
+                    prostava.author.id !== prostava.creator.id
+            )
         })
     });
 

@@ -14,20 +14,22 @@ import { InputNumberButtons } from "../form/InputNumberButtons";
 import { InputNumberSlider } from "../form/InputNumberSlider";
 import { ChipsObject } from "../form/ChipsObject";
 
-interface SettingsContentProps {
-    group: Group;
-    disabled: boolean;
+interface SettingsFormProps {
+    language?: string;
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
-export function SettingsContent(props: SettingsContentProps) {
+export function SettingsForm(props: SettingsFormProps) {
     const dispatch = useAppDispatch();
 
     const [fetchLanguages, { data: languages, isFetching: isLanguagesFetching }] = api.useLazyGetLanguagesQuery();
     const [fetchCurrencies, { data: currencies, isFetching: isCurrenciesFetching }] = api.useLazyGetCurrenciesQuery();
 
-    const { watch } = useFormContext<Group>();
+    const { getValues, watch } = useFormContext<Group>();
+    const group = getValues();
 
-    const t = localeOption("group");
+    const t = localeOption("settings");
 
     const fetchLocale = useCallback(
         (language: string) => {
@@ -38,8 +40,10 @@ export function SettingsContent(props: SettingsContentProps) {
     );
 
     useEffect(() => {
-        fetchLocale(props.group.language);
-    }, [props.group.language, fetchLocale]);
+        if (props.language) {
+            fetchLocale(props.language);
+        }
+    }, [props.language, fetchLocale]);
 
     useEffect(() => {
         const subscription = watch((value, { name }) => {
@@ -56,7 +60,7 @@ export function SettingsContent(props: SettingsContentProps) {
             <div className="flex p-fluid mb-3">
                 <ImagePickerObjectEmoji
                     name="emoji"
-                    readOnly={props.group.readonly}
+                    readOnly={props.readOnly}
                     disabled={props.disabled}
                     className="mr-2 align-self-center"
                 />
@@ -64,8 +68,9 @@ export function SettingsContent(props: SettingsContentProps) {
                     <InputName
                         id="group-settings-name"
                         name="name"
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
+                        required
                     />
                 </Field>
             </div>
@@ -77,7 +82,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         options={languages}
                         showPhoto
                         loading={isLanguagesFetching}
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -88,7 +93,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         options={currencies}
                         showPhoto
                         loading={isCurrenciesFetching || isLanguagesFetching}
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -100,7 +105,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         options={momentTZ.tz.names().map((timezone) => ({ id: timezone, name: timezone }))}
                         // loading={}
                         filter
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -108,7 +113,7 @@ export function SettingsContent(props: SettingsContentProps) {
                     <ChipsObject
                         id="group-settings-types"
                         name="prostava_types"
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -120,7 +125,8 @@ export function SettingsContent(props: SettingsContentProps) {
                         suffix={` ${t["days"]}`}
                         min={0}
                         max={9999}
-                        readOnly={props.group.readonly}
+                        allowEmpty={false}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -132,7 +138,8 @@ export function SettingsContent(props: SettingsContentProps) {
                         suffix={` ${t["hours"]}`}
                         min={0}
                         max={999}
-                        readOnly={props.group.readonly}
+                        allowEmpty={false}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -140,10 +147,10 @@ export function SettingsContent(props: SettingsContentProps) {
                     <InputNumberSlider
                         id="group-settings-count"
                         name="chat_members_count"
-                        suffix={` ${t["participantsOutOf"]} ${props.group.chat_members_all} ${t["members"]}`}
+                        suffix={` ${t["participantsOutOf"]} ${group.chat_members_all} ${t["members"]}`}
                         min={0}
-                        max={props.group.chat_members_all}
-                        readOnly={props.group.readonly}
+                        max={group.chat_members_all}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
@@ -154,7 +161,7 @@ export function SettingsContent(props: SettingsContentProps) {
                         suffix={`% ${t["approvalRequired"]}`}
                         min={0}
                         max={100}
-                        readOnly={props.group.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>

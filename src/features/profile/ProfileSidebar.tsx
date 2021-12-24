@@ -1,18 +1,17 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { localeOption } from "primereact/api";
 import classNames from "classnames";
 import { useHistory } from "react-router";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
-import { useParamGroupId } from "../../hooks/group";
-import { useParamUserId } from "../../hooks/user";
+import { useParamGroupId, useParamUserId } from "../../hooks/app";
 import { api } from "../../app/services";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { SpeedDial } from "primereact/speeddial";
 import { Tooltip } from "primereact/tooltip";
-import { Toast } from "primereact/toast";
-import { ProfileContent } from "./ProfileContent";
+import { Toast, ToastMessage } from "primereact/toast";
+import { ProfileForm } from "./ProfileForm";
 import { Loading } from "../pages/Loading";
 import { MenuItem } from "primereact/menuitem";
 import { SpeedDialAction } from "../prime/SpeedDialAction";
@@ -44,6 +43,13 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
     });
     const { isDirty, isValid } = useFormState({ control: profileForm.control });
 
+    const hideProfile = useCallback(
+        (message?: ToastMessage) => {
+            history.push(history.location.pathname.replace(/\/profile\/\d+$/, ""), { message: message });
+        },
+        [history]
+    );
+
     //Show Profile
     useEffect(() => {
         if (!showProfile && /profile\/\d+$/.test(history.location.pathname)) {
@@ -66,19 +72,26 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
         setCanUpdateUser(isDirty && isValid);
     }, [isDirty, isValid]);
 
-    // Show Toast message when User updated
+    // Show Toast message when User failed
     useEffect(() => {
-        if (!toastRef || (!isUserUpdateSuccess && !isUserUpdateError)) {
-            return;
+        if (toastRef.current && isUserUpdateError) {
+            toastRef.current.show({
+                severity: "error",
+                summary: localeOption("profile")["notSaved"],
+                detail: localeOption("profile")["fail"]
+            });
         }
-        toastRef.current?.show({
-            severity: isUserUpdateSuccess ? "success" : "error",
-            summary: isUserUpdateSuccess
-                ? localeOption("user")["profileSaved"]
-                : localeOption("user")["profileNotSaved"],
-            detail: isUserUpdateSuccess ? localeOption("user")["profileSuccess"] : localeOption("user")["profileFail"]
-        });
-    }, [toastRef, isUserUpdateSuccess, isUserUpdateError]);
+    }, [toastRef, isUserUpdateError]);
+    //Hide Profile when User success
+    useEffect(() => {
+        if (isUserUpdateSuccess) {
+            hideProfile({
+                severity: "success",
+                summary: localeOption("profile")["saved"],
+                detail: localeOption("profile")["success"]
+            });
+        }
+    }, [isUserUpdateSuccess, hideProfile]);
 
     const userMenuModel: MenuItem[] = [
         {
@@ -123,11 +136,9 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
                             disabled={isUserUpdating}
                         />
                         <Button
-                            className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
-                                fadeoutup: !canUpdateUser,
-                                "opacity-0": !canUpdateUser,
-                                fadeinup: canUpdateUser,
-                                "opacity-1": canUpdateUser
+                            className={classNames("p-button-rounded p-button-success mr-2", {
+                                "fadeoutup opacity-0": isUserFetching || !canUpdateUser,
+                                "fadeinup opacity-1": !isUserFetching && canUpdateUser
                             })}
                             icon="pi pi-check"
                             disabled={!canUpdateUser}
@@ -140,11 +151,11 @@ export function ProfileSidebar(props: ProfileSidebarProps) {
                 )}
                 onHide={() => {
                     profileForm.reset(user);
-                    history.push(history.location.pathname.replace(/\/profile\/\d+$/, ""));
+                    hideProfile();
                 }}
                 visible={showProfile}
             >
-                {isUserFetching ? <Loading /> : <ProfileContent user={user!} disabled={isUserUpdating} />}
+                {isUserFetching ? <Loading /> : <ProfileForm disabled={isUserUpdating} readOnly={user?.readonly} />}
                 <Toast ref={toastRef} />
             </Sidebar>
         </FormProvider>

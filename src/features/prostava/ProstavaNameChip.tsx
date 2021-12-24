@@ -16,7 +16,7 @@ export function ProstavaNameChip(props: ProstavaNameChipProps) {
             <Tooltip
                 target={`.prostava-name-chip-${props.prostava.id}`}
                 content={props.prostava.name}
-                position="bottom"
+                position="right"
             />
             <Chip
                 image={props.prostava.photo}

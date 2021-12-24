@@ -107,8 +107,15 @@
         "helpProstava": "I can help you control prostavas",
         "showGitgub": "Show on Github"
     },
-    "home": "Home",
-    "history": "History",
+    "topbar": {
+        "profile": "Profile",
+        "settings": "Settings",
+        "home": "Home",
+        "history": "History",
+        "prostava": "Prostava",
+        "user": "For user",
+        "me": "For me"
+    },
     "app": {
         "notFound": "NOT FOUND",
         "notAvailable": "Requested resource is not available",
@@ -120,14 +127,15 @@
         "noGropExists": "Requested group does not exist",
         "noUser": "USER NOT FOUND",
         "noUserExists": "Requested user does not exist",
+        "noProstava": "PROSTAVA NOT FOUND",
+        "noProstavaExists": "Requested prostava does not exist",
         "amsterdam3000": "Amsterdam 3000"
     },
-    "settings": "Settings",
-    "group": {
-        "settingsSaved": "SETTINGS SAVED",
-        "settingsNotSaved": "SETTINGS NOT SAVED",
-        "settingsSuccess": "Settings have been saved successfully",
-        "settingsFail": "Failed to save settings",
+    "settings": {
+        "saved": "SETTINGS SAVED",
+        "notSaved": "SETTINGS NOT SAVED",
+        "success": "Settings have been saved successfully",
+        "fail": "Failed to save settings",
         "addApple": "Add to Apple",
         "addGoogle": "Add to Google",
         "addCalendar": "Add to calendar",
@@ -164,20 +172,33 @@
             "custom": "Custom"
         }
     },
-    "profile": "Profile",
-    "user": {
-        "profileSaved": "PROFILE SAVED",
-        "profileNotSaved": "PROFILE NOT SAVED",
-        "profileSuccess": "Profile has been saved successfully",
-        "profileFail": "Failed to save profile",
+    "profile": {
+        "saved": "PROFILE SAVED",
+        "notSaved": "PROFILE NOT SAVED",
+        "success": "Profile has been saved successfully",
+        "fail": "Failed to save profile",
         "name": "User name",
         "birthday": "Birthday",
         "members": "Members"
     },
     "form": {
-        "isRequired": "is required",
-        "name": "Name",
-        "mustStartLetter": "must start with letter"
+        "name": {
+            "isRequired": "Name is required",
+            "mustStartLetter": "Name must start with letter"
+        },
+        "type": {
+            "isRequired": "Type is required"
+        },
+        "author": {
+            "isRequired": "Author is required"
+        },
+        "amount": {
+            "isRequired": "Cost is required"
+        },
+        "venue": {
+            "isRequired": "Venue is required",
+            "addressIsRequired": "Pick address on the map"
+        }
     },
     "aztro": {
         "compatibility": "Сompatibility",
@@ -189,20 +210,30 @@
     },
     "prostava": {
         "reminders": "Reminders",
+        "type": "Type",
         "name": "Name",
         "author": "Author",
         "expires": "Expires",
         "rating": "Rating",
         "status": "Status",
         "date": "Date",
+        "time": "Time",
+        "timezone": "Time Zone",
         "cost": "Cost",
+        "currency": "Currency",
         "venue": "Venue",
         "participants": "Participants",
         "nameSearch": "Search by name",
         "statusSearch": "Search by status",
         "costSearch": "Search by cost",
         "venueSearch": "Search by venue",
-        "authorSearch": "Search by author"
+        "authorSearch": "Search by author",
+        "announceProstava": "Announce prostava",
+        "announce": "Announce",
+        "announced": "PROSTAVA ANNOUNCED",
+        "notAnnounced": "PROSTAVA NOT ANNOUNCED",
+        "announceSuccess": "Prostava has been announced successfully",
+        "announceFail": "Failed to announce Prostava"
     },
     "status": {
         "approved": "Approved",

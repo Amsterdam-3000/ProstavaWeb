@@ -23,18 +23,13 @@ export function Login() {
     const toastRef = useRef<Toast>(null);
 
     useEffect(() => {
-        if (!toastRef.current) {
-            return;
+        if (toastRef.current && location.state?.message) {
+            toastRef.current.show({
+                severity: location.state.message.severity,
+                summary: location.state.message.summary,
+                detail: location.state.message.detail
+            });
         }
-        if (!location.state?.error) {
-            return;
-        }
-        toastRef.current.show({
-            severity: "error",
-            summary: location.state.error.name,
-            detail: location.state.error.message,
-            life: 3000
-        });
     }, [location, toastRef]);
 
     async function loginHandler(authUser: TUser) {

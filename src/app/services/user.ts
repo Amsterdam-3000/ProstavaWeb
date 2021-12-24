@@ -20,7 +20,7 @@ export const userApi = groupApi.injectEndpoints({
 
         getUser: builder.query<User, { groupId: string; userId: string }>({
             query: (params) => ({ url: `app/group/${params.groupId}/user/${params.userId}` }),
-            providesTags: (result, error, params) => [{ type: "User", id: `${params.groupId}/${params.userId}` }]
+            providesTags: (result, error, params) => [{ type: "Users", id: `${params.groupId}/${params.userId}` }]
         }),
 
         updateUser: builder.mutation<void, { groupId: string; user: User }>({
@@ -30,7 +30,6 @@ export const userApi = groupApi.injectEndpoints({
                 body: params.user
             }),
             invalidatesTags: (result, error, params) => [
-                { type: "User", id: `${params.groupId}/${params.user.id}` },
                 { type: "Users", id: `${params.groupId}/${params.user.id}` },
                 { type: "Prostavas", id: params.groupId }
             ]

@@ -35,7 +35,7 @@ export function ChipsObject(props: ChipsObjectProps) {
             } else {
                 setError(field.name, {
                     type: "manual",
-                    message: `${localeOption("form")["name"]} ${localeOption("form")["mustStartLetter"]}`
+                    message: localeOption("form")["name"]["mustStartLetter"]
                 });
             }
         };

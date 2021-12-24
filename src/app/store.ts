@@ -3,15 +3,16 @@ import { connectRouter, routerMiddleware, RouterState } from "connected-react-ro
 import { Location } from "history";
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-
 import { history } from "./history";
 import { api } from "./services";
 import { authName, authReducer } from "../features/auth/authSlice";
 import { appName, appReducer } from "../features/app/appSlice";
 
+import { ToastMessage } from "primereact/toast";
+
 type LocationState = {
-    from: Location;
-    error: Error;
+    from?: Location;
+    message?: ToastMessage;
 };
 
 export const store = configureStore({

@@ -1,4 +1,6 @@
 import React from "react";
+import classNames from "classnames";
+import { localeOption } from "primereact/api";
 import { useController } from "react-hook-form";
 
 import { InputNumber, InputNumberProps } from "../prime/InputNumber";
@@ -8,7 +10,14 @@ export interface InputNumberButtonsProps extends InputNumberProps {
 }
 
 export function InputNumberButtons(props: InputNumberButtonsProps) {
-    const { field } = useController({ name: props.name });
+    const t = localeOption("form")[props.name];
+
+    const { field, fieldState } = useController({
+        name: props.name,
+        rules: {
+            required: props.required && t && t["isRequired"]
+        }
+    });
 
     return (
         <InputNumber
@@ -17,10 +26,12 @@ export function InputNumberButtons(props: InputNumberButtonsProps) {
             onChange={(e) => {
                 field.onChange(e.value);
             }}
-            allowEmpty={false}
             showButtons
             incrementButtonClassName="p-button-outlined"
             decrementButtonClassName="p-button-outlined"
+            className={classNames(props.className, {
+                "p-invalid": fieldState.invalid
+            })}
         />
     );
 }

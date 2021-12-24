@@ -11,13 +11,16 @@ export interface InputNameProps extends InputTextProps {
 
 export function InputName(props: InputNameProps) {
     const { setValue } = useFormContext();
+
+    const t = localeOption("form")[props.name];
+
     const { field, fieldState } = useController({
         name: props.name,
         rules: {
-            required: `${localeOption("form")["name"]} ${localeOption("form")["isRequired"]}`,
+            required: props.required && t && t["isRequired"],
             pattern: {
                 value: /^\p{L}.*$/u,
-                message: `${localeOption("form")["name"]} ${localeOption("form")["mustStartLetter"]}`
+                message: t && t["mustStartLetter"]
             }
         }
     });

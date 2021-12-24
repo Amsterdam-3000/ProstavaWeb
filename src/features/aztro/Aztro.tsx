@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
-import { localeOption } from "primereact/api";
+import PrimeReact, { localeOption } from "primereact/api";
 import { useFormContext } from "react-hook-form";
-import { useAppSelector } from "../../hooks/store";
 import { api, User } from "../../app/services";
-import { selectStorageLanguage } from "../app/appSlice";
 
 import { Card } from "primereact/card";
 import { Skeleton } from "primereact/skeleton";
@@ -17,8 +15,6 @@ interface AztroProps {
 }
 
 export function Aztro(props: AztroProps) {
-    const language = useAppSelector(selectStorageLanguage);
-
     const [fetchAztro, { data: aztro, isFetching: isAztroFetching }] = api.useLazyGetAztroQuery();
 
     const { watch } = useFormContext<User>();
@@ -26,17 +22,17 @@ export function Aztro(props: AztroProps) {
     const t = localeOption("aztro");
 
     useEffect(() => {
-        fetchAztro({ language: language, birthday: props.birthday! }, true);
-    }, [language, props.birthday, fetchAztro]);
+        fetchAztro({ language: PrimeReact.locale!, birthday: props.birthday! }, true);
+    }, [props.birthday, fetchAztro]);
 
     useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === "birthday") {
-                fetchAztro({ language: language, birthday: value.birthday! }, true);
+                fetchAztro({ language: PrimeReact.locale!, birthday: value.birthday! }, true);
             }
         });
         return () => subscription.unsubscribe();
-    }, [language, watch, fetchAztro]);
+    }, [watch, fetchAztro]);
 
     return (
         <Card
