@@ -36,6 +36,8 @@ export interface Prostava extends BaseObject {
     participants_max_count?: number;
     creation_date?: Date;
     closing_date?: Date;
+    canWithdraw?: boolean;
+    canRate?: boolean;
 }
 
 export const prostavaApi = userApi.injectEndpoints({
@@ -70,6 +72,13 @@ export const prostavaApi = userApi.injectEndpoints({
             invalidatesTags: (result, error, { groupId, prostavaId }) => [
                 { type: "Prostavas", id: prostavaId || groupId }
             ]
+        }),
+        withdrawProstava: builder.mutation<void, { groupId: string; prostavaId: string }>({
+            query: ({ groupId, prostavaId }) => ({
+                url: `app/group/${groupId}/prostava/${prostavaId}/withdraw`,
+                method: "PUT"
+            }),
+            invalidatesTags: (result, error, { groupId, prostavaId }) => [{ type: "Prostavas", id: prostavaId }]
         })
     })
 });
@@ -101,6 +110,16 @@ export const useGetUserNewProstava = (groupId?: string, userId?: string, isReque
             )
         })
     });
+export const useGetUserPendingProstavas = (groupId?: string, userId?: string) =>
+    prostavaApi.useGetProstavasQuery(groupId!, {
+        skip: !groupId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.filter(
+                (prostava) => prostava.status === ProstavaStatus.Pending && prostava.creator.id === userId
+            )
+        })
+    });
 
 export const useGetRemindersQuery = (groupId: string) =>
     prostavaApi.useGetProstavasQuery(groupId, {
@@ -124,5 +143,14 @@ export const useGetHistoryQuery = (groupId: string) =>
             data: result.data?.filter(
                 (prostava) => prostava.status === ProstavaStatus.Approved || prostava.status === ProstavaStatus.Rejected
             )
+        })
+    });
+
+export const useGetPendingProstavasQuery = (groupId?: string) =>
+    prostavaApi.useGetProstavasQuery(groupId!, {
+        skip: !groupId,
+        selectFromResult: (result) => ({
+            ...result,
+            data: result.data?.filter((prostava) => prostava.status === ProstavaStatus.Pending)
         })
     });

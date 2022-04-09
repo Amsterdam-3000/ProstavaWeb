@@ -56,6 +56,7 @@ export function Reminders() {
                 groupRowsBy="author.name"
                 sortField="closing_date"
                 sortOrder={-1}
+                rowHover
                 removableSort
                 filters={{ global: { value: filterValue, matchMode: "contains" } }}
                 globalFilterFields={["name", "author.name"]}

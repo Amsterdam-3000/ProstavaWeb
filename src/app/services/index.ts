@@ -10,5 +10,6 @@ export {
     useGetHistoryQuery,
     useGetUserNewRequiredProstavas,
     useGetUserNewProstava,
+    useGetUserPendingProstavas,
     ProstavaStatus
 } from "./prostava";

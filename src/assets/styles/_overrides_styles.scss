@@ -205,6 +205,17 @@
     }
 }
 
+//Carousel
+.p-carousel {
+    &.p-carousel-one-item {
+        .p-carousel-indicators,
+        .p-carousel-prev,
+        .p-carousel-next {
+            display: none;
+        }
+    }
+}
+
 //Flex
 @include surface-class("text", "color", $surfaceShades);
 @include surface-class("surface", "background-color", $surfaceShades);

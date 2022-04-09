@@ -1,8 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useHistory } from "react-router";
+import { localeOption } from "primereact/api";
 import classNames from "classnames";
-import { Prostava, ProstavaStatus } from "../../app/services";
+import { api, Prostava, ProstavaStatus } from "../../app/services";
+import { useAppSelector } from "../../hooks/store";
+import { selectStorageGroupId } from "../app/appSlice";
 
 import { Card } from "primereact/card";
+import { Button } from "primereact/button";
 import { Avatar } from "../prime/Avatar";
 import { ProfileButton } from "../profile/ProfileButton";
 import { DateText, TimeText } from "../commons/DateTime";
@@ -18,6 +23,35 @@ export interface ProstavaCardProps {
 }
 
 export function ProstavaCard(props: ProstavaCardProps) {
+    const history = useHistory();
+    const groupId = useAppSelector(selectStorageGroupId);
+
+    const [
+        withdrawProstava,
+        { isLoading: isProstavaWithdrawing, isSuccess: isProstavaWithdrawSuccess, isError: isProstavaWithdrawError }
+    ] = api.useWithdrawProstavaMutation();
+
+    const t = localeOption("prostava");
+
+    // Show message when failed
+    useEffect(() => {
+        if (isProstavaWithdrawError) {
+            history.push(history.location.pathname, {
+                message: {
+                    severity: "error",
+                    summary: localeOption("prostava")["notWithdrawed"],
+                    detail: localeOption("prostava")["withdrawFail"]
+                }
+            });
+        }
+    }, [isProstavaWithdrawError, history]);
+    // Show Prostava dialog when success
+    useEffect(() => {
+        if (isProstavaWithdrawSuccess) {
+            history.push(`${history.location.pathname}/prostava/${props.prostava.id}`);
+        }
+    }, [isProstavaWithdrawSuccess, history, props.prostava]);
+
     const headerTemplate = (
         <div className="flex flex-column relative">
             {props.prostava.venue.photo ? (
@@ -66,9 +100,25 @@ export function ProstavaCard(props: ProstavaCardProps) {
         ) : null;
 
     const footerTemplate =
-        props.prostava.status === ProstavaStatus.Approved ? (
-            <div className="flex justify-content-center">
-                <ProstavaRating rating={props.prostava.rating} readOnly />
+        props.prostava.status === ProstavaStatus.Approved || props.prostava.status === ProstavaStatus.Pending ? (
+            <div className="flex flex-column align-items-center">
+                <ProstavaRating
+                    rating={props.prostava.rating}
+                    isRequest={props.prostava.is_request}
+                    readOnly={!props.prostava.canRate}
+                    disabled={isProstavaWithdrawing}
+                />
+                {props.prostava.canWithdraw ? (
+                    <Button
+                        icon="pi pi-undo"
+                        className="mt-3"
+                        label={t["withdraw"]}
+                        onClick={() => {
+                            withdrawProstava({ groupId: groupId!, prostavaId: props.prostava.id });
+                        }}
+                        loading={isProstavaWithdrawing}
+                    />
+                ) : null}
             </div>
         ) : null;
 

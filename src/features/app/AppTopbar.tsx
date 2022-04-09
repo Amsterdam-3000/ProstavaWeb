@@ -3,7 +3,7 @@ import { localeOption } from "primereact/api";
 import { useHistory } from "react-router";
 import { useParamGroupId } from "../../hooks/app";
 import { useUser } from "../../hooks/user";
-import { api, BaseObject, useGetUserNewRequiredProstavas } from "../../app/services";
+import { api, BaseObject, useGetUserNewRequiredProstavas, useGetUserPendingProstavas } from "../../app/services";
 
 import { Menubar } from "primereact/menubar";
 import { Button } from "primereact/button";
@@ -26,6 +26,10 @@ export function AppTopbar() {
     );
     const { data: userNewRequiredProstavas, isFetching: isUserNewRequiredProstavasFetching } =
         useGetUserNewRequiredProstavas(groupId!, user!.id);
+    const { data: userPendingProstavas, isFetching: isUserPendingProstavasFetching } = useGetUserPendingProstavas(
+        groupId!,
+        user!.id
+    );
 
     const t = localeOption("topbar");
 
@@ -85,18 +89,22 @@ export function AppTopbar() {
         },
         {
             label: t["prostava"],
-            icon: isUserNewRequiredProstavasFetching ? "pi pi-spin pi-spinner" : "pi pi-file",
-            disabled: isUserNewRequiredProstavasFetching,
+            icon:
+                isUserNewRequiredProstavasFetching || isUserPendingProstavasFetching
+                    ? "pi pi-spin pi-spinner"
+                    : "pi pi-file",
+            disabled: isUserNewRequiredProstavasFetching || isUserPendingProstavasFetching,
             items: [
                 {
                     label: t["me"],
                     icon: "pi pi-user",
+                    disabled: userPendingProstavas && userPendingProstavas.some((prostava) => !prostava.is_request),
                     command: () => {
                         history.push(`${history.location.pathname}/prostava`);
                     }
                 },
                 ...(userNewRequiredProstavas
-                    ? userNewRequiredProstavas!.map((prostava) => ({
+                    ? userNewRequiredProstavas.map((prostava) => ({
                           label: prostava.name,
                           icon: prostava.photo,
                           template: MenuItemImageLink,
@@ -111,6 +119,7 @@ export function AppTopbar() {
                 {
                     label: t["user"],
                     icon: "pi pi-users",
+                    disabled: userPendingProstavas && userPendingProstavas.some((prostava) => prostava.is_request),
                     command: () => {
                         history.push(`${history.location.pathname}/prostava?isRequest=true`);
                     }

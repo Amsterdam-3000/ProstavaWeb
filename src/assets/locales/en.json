@@ -233,10 +233,16 @@
         "announced": "PROSTAVA ANNOUNCED",
         "notAnnounced": "PROSTAVA NOT ANNOUNCED",
         "announceSuccess": "Prostava has been announced successfully",
-        "announceFail": "Failed to announce Prostava"
+        "announceFail": "Failed to announce Prostava",
+        "withdraw": "Withdraw",
+        "withdrawed": "PROSTAVA WITHDRAWED",
+        "notWithdrawed": "PROSTAVA NOT WITHDRAWED",
+        "withdrawSuccess": "Prostava has been announced successfully",
+        "withdrawFail": "Failed to announce Prostava"
     },
     "status": {
         "approved": "Approved",
-        "rejected": "Rejected"
+        "rejected": "Rejected",
+        "pending": "Pending"
     }
 }

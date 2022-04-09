@@ -118,6 +118,7 @@ export function History() {
             groupRowsBy="author.name"
             sortMode="multiple"
             multiSortMeta={[{ field: "date", order: -1 }]}
+            rowHover
             removableSort
             filterDisplay="menu"
             filters={{

@@ -15,7 +15,6 @@ import { Avatar } from "../prime/Avatar";
 
 export function Login() {
     const history = useHistory();
-
     const location = useAppSelector(selectLocation);
 
     const [login] = api.useLoginMutation();
