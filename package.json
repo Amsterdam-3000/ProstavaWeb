@@ -1,6 +1,9 @@
 {
   "name": "prostavaweb",
   "version": "0.1.0",
+  "engines": {
+    "npm": "6.x"
+  },
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.7.0",
