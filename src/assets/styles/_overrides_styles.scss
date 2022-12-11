@@ -183,6 +183,39 @@
     }
 }
 
+.p-autocomplete {
+    .p-autocomplete-dropdown {
+        background-color: transparent;
+        color: $buttonBg;
+        border: $outlinedButtonBorder;
+
+        @include button-states {
+            &:hover {
+                background: rgba($buttonBg, $textButtonHoverBgOpacity);
+                color: $buttonBg;
+                border: $outlinedButtonBorder;
+            }
+
+            &:active {
+                background: rgba($buttonBg, $textButtonActiveBgOpacity);
+                color: $buttonBg;
+                border: $outlinedButtonBorder;
+            }
+        }
+    }
+}
+
+//Carousel
+.p-carousel {
+    &.p-carousel-one-item {
+        .p-carousel-indicators,
+        .p-carousel-prev,
+        .p-carousel-next {
+            display: none;
+        }
+    }
+}
+
 //Flex
 @include surface-class("text", "color", $surfaceShades);
 @include surface-class("surface", "background-color", $surfaceShades);
@@ -206,6 +239,18 @@
             color: $buttonBg;
             border: $outlinedButtonBorder;
         }
+    }
+}
+
+//Yandex
+.ymaps-2-1-79-map {
+    border-radius: $borderRadius;
+    .ymaps-2-1-79-inner-panes {
+        border-radius: inherit;
+    }
+    .ymaps-2-1-79-float-button {
+        // border: 0;
+        border-radius: $borderRadius;
     }
 }
 
@@ -253,6 +298,10 @@
 }
 .mt-header {
     margin-top: $headerHeight;
+}
+
+.webapp-content {
+    padding: $panelContentPadding;
 }
 
 //Parallax Star
@@ -356,14 +405,14 @@ $shadows-big: multiple-box-shadow(100);
     transition: 4s;
     cursor: pointer;
     z-index: 2000;
-}
 
-.astronaut img {
-    position: absolute;
-    width: 50px;
-    -webkit-animation: spin 10s linear infinite;
-    -moz-animation: spin 10s linear infinite;
-    animation: spin 10s linear infinite;
+    img {
+        position: absolute;
+        width: 50px;
+        -webkit-animation: spin 10s linear infinite;
+        -moz-animation: spin 10s linear infinite;
+        animation: spin 10s linear infinite;
+    }
 }
 
 @-moz-keyframes spin {
@@ -371,13 +420,11 @@ $shadows-big: multiple-box-shadow(100);
         -moz-transform: rotate(360deg);
     }
 }
-
 @-webkit-keyframes spin {
     100% {
         -webkit-transform: rotate(360deg);
     }
 }
-
 @keyframes spin {
     100% {
         -webkit-transform: rotate(360deg);
@@ -389,7 +436,6 @@ $shadows-big: multiple-box-shadow(100);
     -webkit-animation: x 20s linear infinite alternate;
     animation: x 20s linear infinite alternate;
 }
-
 .y {
     -webkit-animation: y 10s linear infinite alternate;
     animation: y 10s linear infinite alternate;
@@ -401,7 +447,6 @@ $shadows-big: multiple-box-shadow(100);
         transform: translateX(calc(250px));
     }
 }
-
 @keyframes x {
     100% {
         -webkit-transform: translateX(calc(250px));
@@ -415,7 +460,6 @@ $shadows-big: multiple-box-shadow(100);
         transform: translateY(calc(90px));
     }
 }
-
 @keyframes y {
     100% {
         -webkit-transform: translateY(calc(90px));
@@ -455,7 +499,6 @@ $shadows-big: multiple-box-shadow(100);
         transform: scale(1.2);
     }
 }
-
 @-webkit-keyframes pulse {
     0% {
         opacity: 0;

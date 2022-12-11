@@ -1,21 +1,21 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import classNames from "classnames";
 import { useForm, FormProvider, useFormState } from "react-hook-form";
 import { useHistory } from "react-router";
 import { useAppDispatch } from "../../hooks/store";
-import { useParamGroupId } from "../../hooks/group";
+import { useParamGroupId } from "../../hooks/app";
 import { api } from "../../app/services";
 import { setLanguage } from "../app/appSlice";
 
 import { Sidebar, SidebarProps } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { MenuItem } from "primereact/menuitem";
-import { Toast } from "primereact/toast";
+import { Toast, ToastMessage } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
 import { SpeedDial } from "primereact/speeddial";
 import { Loading } from "../pages/Loading";
 import { SpeedDialAction } from "../prime/SpeedDialAction";
-import { SettingsContent } from "./SettingsContent";
+import { SettingsForm } from "./SettingsForm";
 import { localeOption } from "primereact/api";
 
 interface SettingsSidebarProps extends Omit<SidebarProps, "onHide"> {}
@@ -41,7 +41,14 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
     });
     const { isDirty, isValid } = useFormState({ control: settingsForm.control });
 
-    const t = localeOption("group");
+    const t = localeOption("settings");
+
+    const hideSettings = useCallback(
+        (message?: ToastMessage) => {
+            history.push(history.location.pathname.replace(/\/settings$/, ""), { message: message });
+        },
+        [history]
+    );
 
     //Show Settings
     useEffect(() => {
@@ -65,21 +72,26 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
         setCanUpdateGroup(isDirty && isValid);
     }, [isDirty, isValid]);
 
-    //Show Toast message when Group updated
+    //Show Toast message when Group failed
     useEffect(() => {
-        if (!toastRef || (!isGroupUpdateSuccess && !isGroupUpdateError)) {
-            return;
+        if (toastRef.current && isGroupUpdateError) {
+            toastRef.current.show({
+                severity: "error",
+                summary: localeOption("settings")["notSaved"],
+                detail: localeOption("settings")["fail"]
+            });
         }
-        toastRef.current?.show({
-            severity: isGroupUpdateSuccess ? "success" : "error",
-            summary: isGroupUpdateSuccess
-                ? localeOption("group")["settingsSaved"]
-                : localeOption("group")["settingsNotSaved"],
-            detail: isGroupUpdateSuccess
-                ? localeOption("group")["settingsSuccess"]
-                : localeOption("group")["settingsFail"]
-        });
-    }, [toastRef, isGroupUpdateSuccess, isGroupUpdateError]);
+    }, [toastRef, isGroupUpdateError]);
+    //Hide Settings when Group success
+    useEffect(() => {
+        if (isGroupUpdateSuccess) {
+            hideSettings({
+                severity: "success",
+                summary: localeOption("settings")["saved"],
+                detail: localeOption("settings")["success"]
+            });
+        }
+    }, [isGroupUpdateSuccess, hideSettings]);
 
     const groupMenuModel: MenuItem[] = [
         {
@@ -118,16 +130,14 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                             disabled={isGroupUpdating}
                         />
                         <Button
-                            className={classNames("p-button-rounded p-button-outline p-button-success mr-2", {
-                                fadeoutup: !canUpdateGroup,
-                                "opacity-0": !canUpdateGroup,
-                                fadeinup: canUpdateGroup,
-                                "opacity-1": canUpdateGroup
+                            className={classNames("p-button-rounded p-button-success mr-2", {
+                                "fadeoutup opacity-0": !canUpdateGroup,
+                                "fadeinup opacity-1": canUpdateGroup
                             })}
                             icon="pi pi-check"
                             disabled={!canUpdateGroup}
                             onClick={() => {
-                                updateGroup(settingsForm.getValues());
+                                updateGroup({ group: settingsForm.getValues() });
                             }}
                             loading={isGroupUpdating}
                         />
@@ -137,10 +147,14 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                 onHide={() => {
                     settingsForm.reset(group);
                     dispatch(setLanguage(group!.language));
-                    history.push(history.location.pathname.replace(/\/settings$/, ""));
+                    hideSettings();
                 }}
             >
-                {isGroupFetching ? <Loading /> : <SettingsContent group={group!} disabled={isGroupUpdating} />}
+                {isGroupFetching ? (
+                    <Loading />
+                ) : (
+                    <SettingsForm language={group?.language} disabled={isGroupUpdating} readOnly={group?.readonly} />
+                )}
                 <Toast ref={toastRef} />
             </Sidebar>
         </FormProvider>

@@ -1,7 +1,7 @@
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
-@import "primeflex/primeflex.scss";
 @import "emoji-mart/css/emoji-mart.css";
+@import "./assets/styles/flex/primeflex.scss";
 
 @media (prefers-color-scheme: light) {
     @import "./assets/styles/theme_light.scss";

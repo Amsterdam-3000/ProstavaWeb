@@ -22,7 +22,7 @@ export function SpeedDialAction(item: MenuItem, options: MenuItemOptions) {
                 item.command && item.command({ originalEvent: e, item: item });
             }}
         >
-            <span className={classNames(options.iconClassName, item.icon)}></span>
+            <span className={options.iconClassName}></span>
             <Ripple />
         </a>
     );

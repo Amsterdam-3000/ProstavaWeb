@@ -2,22 +2,22 @@ import React, { useState } from "react";
 import { localeOption } from "primereact/api";
 import { useAppSelector } from "../../hooks/store";
 import { api, User } from "../../app/services";
-import { selectStorageGroupId, selectStorageLanguage } from "../app/appSlice";
+import { selectStorageGroupId } from "../app/appSlice";
 
 import { Badge } from "primereact/badge";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "../prime/InputText";
 import { ProfileButton } from "./ProfileButton";
+import { DateText } from "../commons/DateTime";
 
 export function Profiles() {
     const [filterValue, setFilterValue] = useState<string>("");
 
     const groupId = useAppSelector(selectStorageGroupId);
-    const language = useAppSelector(selectStorageLanguage);
     const { data: users, isFetching: isUsersFetching } = api.useGetUsersQuery(groupId!, { skip: !groupId });
 
-    const t = localeOption("user");
+    const t = localeOption("profile");
 
     const headerTemplate = (
         <div className="flex justify-content-between align-items-center">
@@ -39,13 +39,6 @@ export function Profiles() {
             </span>
         </div>
     );
-
-    const birthdayTemplate = (user: User) =>
-        new Date(user.birthday!).toLocaleString(language, {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        });
 
     return (
         <div className="p-card border-1 border-d">
@@ -71,13 +64,15 @@ export function Profiles() {
                     sortable
                     sortField="name"
                     headerClassName="border-top-1"
+                    style={{ width: "60%" }}
                 />
                 <Column
                     header={t["birthday"]}
-                    body={birthdayTemplate}
+                    body={(user: User) => <DateText date={user.birthday} />}
                     sortable
                     sortField="birthday"
                     headerClassName="border-top-1"
+                    style={{ width: "40%" }}
                 />
             </DataTable>
         </div>

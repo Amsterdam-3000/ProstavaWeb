@@ -5,17 +5,20 @@ import { useController } from "react-hook-form";
 import { Dropdown } from "primereact/dropdown";
 import { CalendarNavigatorTemplateParams } from "primereact/calendar";
 import { Calendar, CalendarProps } from "../prime/Calendar";
+import { localeOption } from "primereact/api";
 
-export interface CalendarDateButtonProps extends CalendarProps {
+export interface CalendarDateTimeProps extends CalendarProps {
     name: string;
     text?: string;
 }
 
-export function CalendarDateButton(props: CalendarDateButtonProps) {
+export function CalendarDateTime(props: CalendarDateTimeProps) {
+    const t = localeOption("form")[props.name];
+
     const { field, fieldState } = useController({
         name: props.name,
         rules: {
-            required: `${props.text || props.name.replace(/^./, (match) => match.toUpperCase())} is required`
+            required: props.required && t && t["isRequired"]
         }
     });
 
@@ -47,9 +50,8 @@ export function CalendarDateButton(props: CalendarDateButtonProps) {
             yearNavigator
             yearNavigatorTemplate={navigatorTemplate}
             yearRange={props.yearRange ? props.yearRange : `1970:${new Date().getFullYear()}`}
-            //TODO Locale format?
             dateFormat="d MM yy"
-            showIcon
+            showIcon={!props.timeOnly}
             readOnlyInput
         />
     );

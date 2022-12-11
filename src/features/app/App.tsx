@@ -1,13 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { localeOption } from "primereact/api";
 import { Route, Switch, useHistory } from "react-router";
 import { useAppSelector } from "../../hooks/store";
 import { useAppDispatch } from "../../hooks/store";
-import { useParamGroupId } from "../../hooks/group";
-import { useParamUserId, useUser } from "../../hooks/user";
+import { useParamGroupId, useParamProstavaId, useParamUserId } from "../../hooks/app";
+import { useUser } from "../../hooks/user";
+import { selectLocation } from "../../app/history";
 import { api } from "../../app/services";
 import { setGroupId, selectStorageGroupId, setLanguage } from "./appSlice";
 
+import { Toast } from "primereact/toast";
 import { BlockUI } from "primereact/blockui";
 import { Exception } from "../pages/Exception";
 import { Loading } from "../pages/Loading";
@@ -17,10 +19,13 @@ import { Dashboard } from "../dashboard/Dashboard";
 import { History } from "../prostava/History";
 import { AppTopbar } from "./AppTopbar";
 import { AppFooter } from "./AppFooter";
+import { ProstavaDialog } from "../prostava/ProstavaDialog";
 
 export function App() {
     const history = useHistory();
+    const location = useAppSelector(selectLocation);
     const dispatch = useAppDispatch();
+    const toastRef = useRef<Toast>(null);
     const {
         data: groups,
         error: groupsError,
@@ -31,6 +36,7 @@ export function App() {
     const storageGroupId = useAppSelector(selectStorageGroupId);
     const paramGroupId = useParamGroupId();
     const paramUserId = useParamUserId();
+    const paramProstavaId = useParamProstavaId();
     const {
         data: group,
         isLoading: isGroupLoading,
@@ -49,6 +55,29 @@ export function App() {
         { groupId: paramGroupId, userId: paramUserId },
         { skip: !(paramGroupId && paramUserId) }
     );
+    const { isError: isParamProstavaError } = api.useGetProstavaQuery(
+        { groupId: paramGroupId, prostavaId: paramProstavaId },
+        { skip: !(paramGroupId && paramProstavaId) }
+    );
+
+    //Show message
+    useEffect(() => {
+        if (toastRef.current && location.state?.message) {
+            toastRef.current.show({
+                severity: location.state.message.severity,
+                summary: location.state.message.summary,
+                detail: location.state.message.detail
+            });
+        }
+    }, [toastRef, location]);
+
+    //Set groupId to locale storage
+    useEffect(() => {
+        if (isGroupSuccess && group) {
+            dispatch(setGroupId(group.id));
+            dispatch(setLanguage(group.language));
+        }
+    }, [isGroupSuccess, group, dispatch]);
 
     //Delete '/' from end of the url
     useEffect(() => {
@@ -57,57 +86,38 @@ export function App() {
         }
     }, [history]);
 
-    //Back to Login page for users without groups
+    //Add groupId from first Group to url
     useEffect(() => {
-        if (!isGroupsSuccess) {
+        if (paramGroupId || !storageGroupId) {
             return;
         }
-        if (!groups?.length) {
+        if (history.location.pathname.endsWith("/app")) {
+            history.replace(`/app/${storageGroupId}`);
+        }
+    }, [paramGroupId, storageGroupId, history]);
+
+    //Add userId to url
+    useEffect(() => {
+        if (paramUserId || !groupUser) {
+            return;
+        }
+        if (history.location.pathname.endsWith("/profile")) {
+            history.replace(`${history.location.pathname}/${groupUser.id}`);
+        }
+    }, [paramUserId, groupUser, history, history.location]);
+
+    //Back to Login page for users without groups
+    useEffect(() => {
+        if (isGroupsSuccess && !groups?.length) {
             history.push("/login", {
-                error: {
-                    name: localeOption("app")["error"],
-                    message: localeOption("app")["noGroups"]
+                message: {
+                    severity: "error",
+                    summary: localeOption("app")["error"],
+                    detail: localeOption("app")["noGroups"]
                 }
             });
         }
     }, [isGroupsSuccess, groups, history]);
-
-    //Add groupId from first Group to url
-    useEffect(() => {
-        if (paramGroupId) {
-            return;
-        }
-        if (!storageGroupId) {
-            return;
-        }
-        history.replace(`/app/${storageGroupId}`);
-    }, [paramGroupId, storageGroupId, history]);
-
-    //Set groupId to locale storage
-    useEffect(() => {
-        if (!isGroupSuccess) {
-            return;
-        }
-        if (!group) {
-            return;
-        }
-        dispatch(setGroupId(group.id));
-        dispatch(setLanguage(group.language));
-    }, [isGroupSuccess, group, dispatch]);
-
-    //Add userId to url
-    useEffect(() => {
-        if (paramUserId) {
-            return;
-        }
-        if (!groupUser) {
-            return;
-        }
-        if (!history.location.pathname.endsWith("/profile")) {
-            return;
-        }
-        history.replace(`${history.location.pathname}/${groupUser.id}`);
-    }, [paramUserId, groupUser, history, history.location]);
 
     if (isGroupsLoading || isGroupLoading || isGroupUserLoading) {
         return <Loading background />;
@@ -136,6 +146,15 @@ export function App() {
             />
         );
     }
+    if (isParamProstavaError) {
+        return (
+            <Exception
+                title={localeOption("app")["noProstava"]}
+                detail={localeOption("app")["noProstavaExists"]}
+                severity="info"
+            />
+        );
+    }
 
     return (
         <div className="layout-wrapper">
@@ -156,7 +175,9 @@ export function App() {
                 <AppFooter />
             </div>
             <SettingsSidebar position="left" />
+            <ProstavaDialog maximizable />
             <ProfileSidebar position="right" />
+            <Toast ref={toastRef} />
         </div>
     );
 }

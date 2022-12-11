@@ -21,18 +21,18 @@ export interface Aztro {
 
 export const globalApi = authApi.injectEndpoints({
     endpoints: (builder) => ({
-        getLanguages: builder.query<BaseObject[], string>({
+        getLanguages: builder.query<BaseObject[], string | undefined>({
             query: (language) => ({ url: `global/${language}/languages` }),
             //TODO New Lang Tag?
             providesTags: (result, error) => ["Group"]
         }),
-        getCurrencies: builder.query<BaseObject[], string>({
+        getCurrencies: builder.query<BaseObject[], string | undefined>({
             query: (language) => ({ url: `global/${language}/currencies` }),
             //TODO New Lang Tag?
             providesTags: (result, error) => ["Group"]
         }),
 
-        getAztro: builder.query<Aztro, { language: string; birthday: Date }>({
+        getAztro: builder.query<Aztro, { language?: string; birthday: Date }>({
             query: (params) => ({ url: `global/${params.language}/aztro/${new Date(params.birthday).toJSON()}` })
         }),
 

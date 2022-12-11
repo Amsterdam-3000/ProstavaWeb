@@ -1,27 +1,31 @@
 import React from "react";
-import { User } from "../../app/services";
 import { localeOption } from "primereact/api";
+import { useFormContext } from "react-hook-form";
+import { User } from "../../app/services";
 
 import { Field } from "../form/Field";
 import { InputName } from "../form/InputName";
 import { ImagePickerObjectEmoji } from "../form/ImagePickerObjectEmoji";
-import { CalendarDateButton } from "../form/CalendarDateButton";
+import { CalendarDateTime } from "../form/CalendarDateTime";
 import { Aztro } from "../aztro/Aztro";
 
-interface ProfileContentProps {
-    user: User;
-    disabled: boolean;
+interface ProfileFormProps {
+    readOnly?: boolean;
+    disabled?: boolean;
 }
 
-export function ProfileContent(props: ProfileContentProps) {
-    const t = localeOption("user");
+export function ProfileForm(props: ProfileFormProps) {
+    const t = localeOption("profile");
+
+    const { getValues } = useFormContext<User>();
+    const user = getValues();
 
     return (
         <React.Fragment>
             <div className="flex p-fluid mb-3">
                 <ImagePickerObjectEmoji
                     name="emoji"
-                    readOnly={props.user.readonly}
+                    readOnly={props.readOnly}
                     disabled={props.disabled}
                     className="mr-2 align-self-center"
                 />
@@ -29,22 +33,23 @@ export function ProfileContent(props: ProfileContentProps) {
                     <InputName
                         id="user-profile-name"
                         name="name"
-                        readOnly={props.user.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
+                        required
                     />
                 </Field>
             </div>
             <div className="flex flex-column p-fluid">
                 <Field label={t["birthday"]}>
-                    <CalendarDateButton
+                    <CalendarDateTime
                         id="user-profile-birthday"
                         name="birthday"
-                        readOnly={props.user.readonly}
+                        readOnly={props.readOnly}
                         disabled={props.disabled}
                     />
                 </Field>
             </div>
-            <Aztro birthday={props.user.birthday} isRoman={new RegExp(/roman/, "i").test(props.user.name)} />
+            <Aztro birthday={user.birthday} isRoman={new RegExp(/roman/, "i").test(user.name)} />
         </React.Fragment>
     );
 }

@@ -22,6 +22,10 @@
         background: transparent;
         border: 0 none;
 
+        &.p-inputtext {
+            padding-right: 0;
+        }
+
         &.p-placeholder {
             color: $inputPlaceholderTextColor;
         }

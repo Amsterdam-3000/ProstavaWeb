@@ -17,7 +17,16 @@ export function InputSlider(props: InputSliderProps) {
                 inputClassName={classNames({ "border-round": props.readOnly, "opacity-100": props.readOnly })}
                 disabled={props.disabled || props.readOnly}
             />
-            {props.readOnly ? null : <Slider className="input-slider" {...sliderProps} />}
+            {props.readOnly ? null : (
+                <Slider
+                    className="input-slider"
+                    {...sliderProps}
+                    value={props.value || 0}
+                    onChange={(e) => {
+                        props.onChange && props.onChange({ originalEvent: e.originalEvent, value: e.value as number });
+                    }}
+                />
+            )}
         </React.Fragment>
     );
 }

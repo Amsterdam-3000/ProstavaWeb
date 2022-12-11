@@ -118,6 +118,7 @@ export function History() {
             groupRowsBy="author.name"
             sortMode="multiple"
             multiSortMeta={[{ field: "date", order: -1 }]}
+            rowHover
             removableSort
             filterDisplay="menu"
             filters={{
@@ -147,6 +148,7 @@ export function History() {
                 showFilterMenuOptions={false}
                 showApplyButton={false}
                 showClearButton={false}
+                style={{ width: "18%" }}
             />
             <Column
                 header={t["status"]}
@@ -172,6 +174,7 @@ export function History() {
                         maxSelectedLabels={1}
                     />
                 )}
+                style={{ width: "11%" }}
             />
             <Column
                 header={t["date"]}
@@ -195,6 +198,7 @@ export function History() {
                     />
                 )}
                 dataType="date"
+                style={{ width: "10%" }}
             />
             <Column
                 header={t["cost"]}
@@ -219,6 +223,7 @@ export function History() {
                     />
                 )}
                 dataType="numeric"
+                style={{ width: "10%" }}
             />
             <Column
                 header={t["venue"]}
@@ -242,6 +247,7 @@ export function History() {
                         maxSelectedLabels={1}
                     />
                 )}
+                style={{ width: "12%" }}
             />
             <Column
                 header={t["author"]}
@@ -267,11 +273,13 @@ export function History() {
                         maxSelectedLabels={1}
                     />
                 )}
+                style={{ width: "15%" }}
             />
             <Column
                 header={t["participants"]}
                 body={(prostava: Prostava) => <ProstavaParticipantsGroup prostava={prostava} />}
                 field="participants"
+                style={{ width: "12%" }}
             />
             <Column
                 header={t["rating"]}
@@ -289,6 +297,7 @@ export function History() {
                     <Rating value={options.value} onChange={(e) => options.filterApplyCallback(e.value)} />
                 )}
                 dataType="numeric"
+                style={{ width: "12%" }}
             />
         </DataTable>
     );

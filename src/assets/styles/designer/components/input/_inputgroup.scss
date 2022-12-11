@@ -35,30 +35,48 @@
 
 .p-inputgroup-addon:first-child,
 .p-inputgroup button:first-child,
-.p-inputgroup input:first-child,
+.p-inputgroup > input:first-child,
 .p-inputgroup > .p-inputwrapper:first-child,
-.p-inputgroup > .p-inputwrapper:first-child > .p-inputtext {
+.p-inputgroup > .p-inputwrapper:first-child > .p-inputtext:first-child {
     border-top-left-radius: $borderRadius;
     border-bottom-left-radius: $borderRadius;
 }
 
-.p-inputgroup .p-float-label:first-child input {
+.p-inputgroup .p-float-label:not(:first-child) > input,
+.p-inputgroup .p-float-label:not(:first-child) .p-inputwrapper,
+.p-inputgroup .p-float-label:not(:first-child) .p-inputwrapper > .p-inputtext:first-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.p-inputgroup .p-float-label:first-child > input,
+.p-inputgroup .p-float-label:first-child .p-inputwrapper,
+.p-inputgroup .p-float-label:first-child .p-inputwrapper > .p-inputtext:first-child {
     border-top-left-radius: $borderRadius;
     border-bottom-left-radius: $borderRadius;
 }
 
 .p-inputgroup-addon:last-child,
 .p-inputgroup button:last-child,
-.p-inputgroup input:last-child,
-.p-inputgroup > .p-inputwrapper:last-child, 
-.p-inputgroup > .p-inputwrapper:last-child > .p-inputtext {
+.p-inputgroup > input:last-child,
+.p-inputgroup > .p-inputwrapper:last-child,
+.p-inputgroup > .p-inputwrapper:last-child > .p-inputtext:last-child {
     border-top-right-radius: $borderRadius;
     border-bottom-right-radius: $borderRadius;
 }
 
-.p-inputgroup .p-float-label:last-child input {
+.p-inputgroup .p-float-label:last-child > input,
+.p-inputgroup .p-float-label:last-child .p-inputwrapper,
+.p-inputgroup .p-float-label:last-child .p-inputwrapper > .p-inputtext:last-child {
     border-top-right-radius: $borderRadius;
     border-bottom-right-radius: $borderRadius;
+}
+
+.p-inputgroup .p-float-label:not(:last-child) > input,
+.p-inputgroup .p-float-label:not(:last-child) .p-inputwrapper,
+.p-inputgroup .p-float-label:not(:last-child) .p-inputwrapper > .p-inputtext:last-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .p-fluid {

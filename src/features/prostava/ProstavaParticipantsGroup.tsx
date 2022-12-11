@@ -20,6 +20,7 @@ export function ProstavaParticipantsGroup(props: ProstavaParticipantsGroupProps)
                 ?.filter((participant) => participant.rating > 0)
                 .map((participant) => (
                     <Avatar
+                        key={`${props.prostava.id}-${participant.user.id}`}
                         shape="circle"
                         image={participant.user.photo}
                         imageAlt={participant.user.name}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router";
 import { localeOption } from "primereact/api";
 import { useAppSelector } from "../../hooks/store";
 import { useGetRemindersQuery, Prostava } from "../../app/services";
@@ -7,15 +8,17 @@ import { selectStorageGroupId } from "../app/appSlice";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Badge } from "primereact/badge";
+import { Button } from "primereact/button";
 import { InputText } from "../prime/InputText";
 import { DateText } from "../commons/DateTime";
 import { ProfileButton } from "../profile/ProfileButton";
 import { ProstavaNameChip } from "./ProstavaNameChip";
 
 export function Reminders() {
-    const [filterValue, setFilterValue] = useState<string>("");
-
+    const history = useHistory();
     const groupId = useAppSelector(selectStorageGroupId);
+
+    const [filterValue, setFilterValue] = useState<string>("");
 
     const { data: reminders, isFetching: isRemindersFetching } = useGetRemindersQuery(groupId!);
 
@@ -53,6 +56,7 @@ export function Reminders() {
                 groupRowsBy="author.name"
                 sortField="closing_date"
                 sortOrder={-1}
+                rowHover
                 removableSort
                 filters={{ global: { value: filterValue, matchMode: "contains" } }}
                 globalFilterFields={["name", "author.name"]}
@@ -67,6 +71,7 @@ export function Reminders() {
                     sortable
                     sortField="name"
                     headerClassName="border-top-1"
+                    style={{ width: "40%" }}
                 />
                 <Column
                     header={t["author"]}
@@ -75,6 +80,7 @@ export function Reminders() {
                     field="author.name"
                     sortField="author.name"
                     headerClassName="border-top-1"
+                    style={{ width: "30%" }}
                 />
                 <Column
                     header={t["expires"]}
@@ -82,7 +88,25 @@ export function Reminders() {
                     sortable
                     sortField="closing_date"
                     headerClassName="border-top-1"
+                    style={{ width: "20%" }}
                 />
+                {reminders?.some((prostava) => !prostava.readonly) ? (
+                    <Column
+                        headerClassName="border-top-1"
+                        style={{ width: "10%" }}
+                        body={(prostava: Prostava) => (
+                            <Button
+                                icon="pi pi-bell"
+                                className="p-button-rounded p-button-text"
+                                tooltip={localeOption("prostava")["announce"]}
+                                tooltipOptions={{ position: "bottom" }}
+                                onClick={() => {
+                                    history.push(`${history.location.pathname}/prostava/${prostava.id}`);
+                                }}
+                            />
+                        )}
+                    />
+                ) : null}
             </DataTable>
         </div>
     );
