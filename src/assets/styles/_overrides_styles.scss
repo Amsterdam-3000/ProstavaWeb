@@ -300,6 +300,10 @@
     margin-top: $headerHeight;
 }
 
+.webapp-content {
+    padding: $panelContentPadding;
+}
+
 //Parallax Star
 @function multiple-box-shadow($n) {
     $value: "#{random(2000)}px #{random(2000)}px #FFF";

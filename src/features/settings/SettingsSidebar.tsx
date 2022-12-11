@@ -137,7 +137,7 @@ export function SettingsSidebar(props: SettingsSidebarProps) {
                             icon="pi pi-check"
                             disabled={!canUpdateGroup}
                             onClick={() => {
-                                updateGroup(settingsForm.getValues());
+                                updateGroup({ group: settingsForm.getValues() });
                             }}
                             loading={isGroupUpdating}
                         />

@@ -33,15 +33,16 @@ export const groupApi = globalApi.injectEndpoints({
             providesTags: (result, error, groupId) => [{ type: "Group", id: groupId }]
         }),
 
-        updateGroup: builder.mutation<void, Group>({
-            query: (group) => ({
-                url: `app/group/${group.id}`,
+        updateGroup: builder.mutation<void, { group: Group; fromWebApp?: boolean }>({
+            query: (params) => ({
+                url: `app/group/${params.group.id}`,
                 method: "PATCH",
-                body: group
+                params: { fromWebApp: params.fromWebApp },
+                body: params.group
             }),
-            invalidatesTags: (result, error, group) => [
-                { type: "Group", id: group.id },
-                { type: "Groups", id: group.id }
+            invalidatesTags: (result, error, params) => [
+                { type: "Group", id: params.group.id },
+                { type: "Groups", id: params.group.id }
             ]
         })
     })

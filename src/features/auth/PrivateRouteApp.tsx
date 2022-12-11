@@ -2,7 +2,8 @@ import { useUser } from "../../hooks/user";
 
 import { Redirect, Route, RouteProps } from "react-router";
 
-export function PrivateRoute({ component, ...rest }: RouteProps) {
+export function PrivateRouteApp({ component, ...rest }: RouteProps) {
+
     const user = useUser();
 
     return user ? (

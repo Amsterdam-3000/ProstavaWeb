@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import PrimeReact, { localeOption } from "primereact/api";
 import momentTZ from "moment-timezone";
 import { useFormContext } from "react-hook-form";
-import { useAppDispatch, useAppSelector } from "../../hooks/store";
+import { useAppDispatch } from "../../hooks/store";
+import { useParamGroupId } from "../../hooks/app";
 import { useUser } from "../../hooks/user";
 import { api, BaseObject, Prostava } from "../../app/services";
-import { selectStorageGroupId } from "../app/appSlice";
 
 import { Field } from "../form/Field";
 import { InputName } from "../form/InputName";
@@ -24,7 +24,7 @@ interface ProstavaFormProps {
 
 export function ProstavaForm(props: ProstavaFormProps) {
     const dispatch = useAppDispatch();
-    const groupId = useAppSelector(selectStorageGroupId);
+    const groupId = useParamGroupId();
     const userId = useUser()?.id;
 
     const { getValues, watch } = useFormContext<Prostava>();

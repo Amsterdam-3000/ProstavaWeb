@@ -63,20 +63,25 @@ export const prostavaApi = userApi.injectEndpoints({
             providesTags: (prostava, error, params) => [{ type: "Prostavas", id: params.prostavaId || prostava?.id }]
         }),
 
-        announceProstava: builder.mutation<void, { groupId: string; prostavaId: string; prostava: Prostava }>({
-            query: ({ groupId, prostavaId, prostava }) => ({
-                url: `app/group/${groupId}/prostava/${prostava.id}/announce`,
+        announceProstava: builder.mutation<
+            void,
+            { groupId: string; prostavaId: string; prostava: Prostava; fromWebApp?: boolean }
+        >({
+            query: (params) => ({
+                url: `app/group/${params.groupId}/prostava/${params.prostava.id}/announce`,
                 method: "PUT",
-                body: prostava
+                params: { fromWebApp: params.fromWebApp },
+                body: params.prostava
             }),
             invalidatesTags: (result, error, { groupId, prostavaId }) => [
                 { type: "Prostavas", id: prostavaId || groupId }
             ]
         }),
-        withdrawProstava: builder.mutation<void, { groupId: string; prostavaId: string }>({
-            query: ({ groupId, prostavaId }) => ({
-                url: `app/group/${groupId}/prostava/${prostavaId}/withdraw`,
-                method: "PUT"
+        withdrawProstava: builder.mutation<void, { groupId: string; prostavaId: string; fromWebApp?: boolean }>({
+            query: (params) => ({
+                url: `app/group/${params.groupId}/prostava/${params.prostavaId}/withdraw`,
+                method: "PUT",
+                params: { fromWebApp: params.fromWebApp }
             }),
             invalidatesTags: (result, error, { groupId, prostavaId }) => [{ type: "Prostavas", id: prostavaId }]
         })

@@ -87,7 +87,7 @@ export function ImagePickerVenueAddress(props: ImagePickerVenueAddressProps) {
             <img
                 //TODO API yandex
                 src={venue.photo || "https://static-maps.yandex.ru/1.x/?size=512,288&z=0&l=map&ll=0,0&scale=1.5"}
-                width={320}
+                width={360}
                 alt={venue.name}
                 className="border-round"
             />

@@ -11,6 +11,7 @@ interface ExceptionProps {
     title: string;
     detail: string;
     severity?: "success" | "info" | "warning" | "error";
+    isWebApp?: boolean;
 }
 
 export function Exception(props: ExceptionProps) {
@@ -36,14 +37,16 @@ export function Exception(props: ExceptionProps) {
             <div className="exception-content relative">
                 <h1 className="exception-title md:text-7xl">{props.title}</h1>
                 <p className="exception-detail text-secondary font-medium">{props.detail}</p>
-                <Button
-                    type="button"
-                    label={localeOption("app")["toHome"]}
-                    icon="pi pi-home"
-                    onClick={(e) => {
-                        history.push("/");
-                    }}
-                />
+                {!props.isWebApp ? (
+                    <Button
+                        type="button"
+                        label={localeOption("app")["toHome"]}
+                        icon="pi pi-home"
+                        onClick={(e) => {
+                            history.push("/");
+                        }}
+                    />
+                ) : null}
             </div>
         </div>
     );

@@ -11,9 +11,13 @@ const slice = createSlice({
     initialState: { token: null } as AuthState,
     reducers: {},
     extraReducers: (builder) => {
-        builder.addMatcher(api.endpoints.login.matchFulfilled, (state, { payload }) => {
+        builder.addMatcher(api.endpoints.loginApp.matchFulfilled, (state, { payload }) => {
             state.token = payload;
         });
+        builder.addMatcher(api.endpoints.loginWebApp.matchFulfilled, (state, { payload }) => {
+            state.token = payload;
+        });
+
         builder.addMatcher(api.endpoints.logout.matchFulfilled, (state) => {
             state.token = null;
         });

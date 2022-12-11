@@ -22,7 +22,7 @@ export function Aztro(props: AztroProps) {
     const t = localeOption("aztro");
 
     useEffect(() => {
-        fetchAztro({ language: PrimeReact.locale!, birthday: props.birthday! }, true);
+        fetchAztro({ language: PrimeReact.locale!, birthday: props.birthday! }, true);   
     }, [props.birthday, fetchAztro]);
 
     useEffect(() => {

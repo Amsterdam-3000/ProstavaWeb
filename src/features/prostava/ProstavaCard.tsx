@@ -3,28 +3,29 @@ import { useHistory } from "react-router";
 import { localeOption } from "primereact/api";
 import classNames from "classnames";
 import { api, Prostava, ProstavaStatus } from "../../app/services";
-import { useAppSelector } from "../../hooks/store";
-import { selectStorageGroupId } from "../app/appSlice";
+import { useParamGroupId } from "../../hooks/app";
 
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Avatar } from "../prime/Avatar";
-import { ProfileButton } from "../profile/ProfileButton";
+import { ProstavaRating } from "./ProstavaRating";
+import { ProstavaStatusTag } from "./ProstavaStatusTag";
 import { DateText, TimeText } from "../commons/DateTime";
 import { CostText } from "../commons/Cost";
 import { VenueLink } from "../commons/Venue";
-import { ProstavaRating } from "./ProstavaRating";
-import { ProstavaStatusTag } from "./ProstavaStatusTag";
+import { ProfileButton } from "../profile/ProfileButton";
 import { ProstavaParticipantsGroup } from "./ProstavaParticipantsGroup";
 
 export interface ProstavaCardProps {
     prostava: Prostava;
     className?: string;
+    isWebApp?: boolean;
 }
 
 export function ProstavaCard(props: ProstavaCardProps) {
     const history = useHistory();
-    const groupId = useAppSelector(selectStorageGroupId);
+
+    const groupId = useParamGroupId();
 
     const [
         withdrawProstava,
@@ -51,6 +52,23 @@ export function ProstavaCard(props: ProstavaCardProps) {
             history.push(`${history.location.pathname}/prostava/${props.prostava.id}`);
         }
     }, [isProstavaWithdrawSuccess, history, props.prostava]);
+
+    const subTitleTemplate =
+        props.prostava.status !== ProstavaStatus.Rejected ? (
+            <div className="flex flex-column">
+                <div className="flex justify-content-between mb-1">
+                    <DateText date={props.prostava.date} />
+                    <span>
+                        {props.prostava.is_preview ? (
+                            <TimeText time={props.prostava.date} timeZone={props.prostava.timezone} />
+                        ) : (
+                            <CostText amount={props.prostava.amount!} currency={props.prostava.currency!} />
+                        )}
+                    </span>
+                </div>
+                <VenueLink venue={props.prostava.venue} address={props.prostava.venue.address} className="text-sm" />
+            </div>
+        ) : null;
 
     const headerTemplate = (
         <div className="flex flex-column relative">
@@ -82,23 +100,6 @@ export function ProstavaCard(props: ProstavaCardProps) {
         </div>
     );
 
-    const subTitleTemplate =
-        props.prostava.status !== ProstavaStatus.Rejected ? (
-            <div className="flex flex-column">
-                <div className="flex justify-content-between mb-1">
-                    <DateText date={props.prostava.date} />
-                    <span>
-                        {props.prostava.is_preview ? (
-                            <TimeText time={props.prostava.date} timeZone={props.prostava.timezone} />
-                        ) : (
-                            <CostText amount={props.prostava.amount!} currency={props.prostava.currency!} />
-                        )}
-                    </span>
-                </div>
-                <VenueLink venue={props.prostava.venue} address={props.prostava.venue.address} className="text-sm" />
-            </div>
-        ) : null;
-
     const footerTemplate =
         props.prostava.status === ProstavaStatus.Approved || props.prostava.status === ProstavaStatus.Pending ? (
             <div className="flex flex-column align-items-center">
@@ -108,13 +109,13 @@ export function ProstavaCard(props: ProstavaCardProps) {
                     readOnly={!props.prostava.canRate}
                     disabled={isProstavaWithdrawing}
                 />
-                {props.prostava.canWithdraw ? (
+                {props.prostava.canWithdraw && !props.isWebApp ? (
                     <Button
                         icon="pi pi-undo"
                         className="mt-3"
                         label={t["withdraw"]}
                         onClick={() => {
-                            withdrawProstava({ groupId: groupId!, prostavaId: props.prostava.id });
+                            withdrawProstava({ groupId: groupId, prostavaId: props.prostava.id });
                         }}
                         loading={isProstavaWithdrawing}
                     />

@@ -8,6 +8,7 @@
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
+    "@types/telegram-web-app": "^6.2.2",
     "classnames": "^2.3.1",
     "connected-react-router": "^6.9.2",
     "emoji-mart": "^3.0.1",
@@ -56,6 +57,7 @@
     "prettier": "^2.5.1"
   },
   "scripts": {
+    "start-dev": "sudo PORT=80 react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

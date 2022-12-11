@@ -23,10 +23,11 @@ export const userApi = groupApi.injectEndpoints({
             providesTags: (result, error, params) => [{ type: "Users", id: `${params.groupId}/${params.userId}` }]
         }),
 
-        updateUser: builder.mutation<void, { groupId: string; user: User }>({
+        updateUser: builder.mutation<void, { groupId: string; user: User; fromWebApp?: boolean }>({
             query: (params) => ({
                 url: `app/group/${params.groupId}/user/${params.user.id}`,
                 method: "PATCH",
+                params: { fromWebApp: params.fromWebApp },
                 body: params.user
             }),
             invalidatesTags: (result, error, params) => [

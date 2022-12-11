@@ -17,7 +17,7 @@ export function Login() {
     const history = useHistory();
     const location = useAppSelector(selectLocation);
 
-    const [login] = api.useLoginMutation();
+    const [login] = api.useLoginAppMutation();
 
     const toastRef = useRef<Toast>(null);
 
