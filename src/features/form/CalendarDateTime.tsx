@@ -49,7 +49,7 @@ export function CalendarDateTime(props: CalendarDateTimeProps) {
             monthNavigatorTemplate={navigatorTemplate}
             yearNavigator
             yearNavigatorTemplate={navigatorTemplate}
-            yearRange={props.yearRange ? props.yearRange : `1970:${new Date().getFullYear()}`}
+            yearRange={props.yearRange ? props.yearRange : `1970:${new Date().getFullYear() + 1}`}
             dateFormat="d MM yy"
             showIcon={!props.timeOnly}
             readOnlyInput
